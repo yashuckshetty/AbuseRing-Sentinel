@@ -1,0 +1,19 @@
+{
+  "sim_start_ts": 1700000000,
+  "train_end_ts": 1704665600,
+  "val_end_ts": 1706220800,
+  "test_end_ts": 1707776000,
+  "train_end_day": 54,
+  "val_end_day": 72,
+  "seconds_per_day": 86400,
+  "seed": 43,
+  "n_accounts": 5000,
+  "abuse_prevalence": {
+    "benign_independent": 0.6,
+    "benign_coordinated": 0.25,
+    "abusive_coordinated": 0.15
+  },
+  "counterfactual_hard_bc": true,
+  "counterfactual_varied_payout": true,
+  "_note": "Temporal split -- no random splits permitted."
+}

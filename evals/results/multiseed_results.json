@@ -1,0 +1,167 @@
+{
+  "seeds": [
+    {
+      "seed": 42,
+      "n_test_accounts": 3467,
+      "n_true_ac": 198,
+      "behavioral_precision": 0.8832,
+      "behavioral_recall": 0.9545,
+      "behavioral_f1": 0.9175,
+      "structural_precision": 0.7833,
+      "structural_recall": 0.2374,
+      "structural_f1": 0.3643,
+      "fused_precision": 1.0,
+      "fused_recall": 0.3081,
+      "fused_f1": 0.471,
+      "auto_act_precision": 1.0,
+      "auto_act_recall": 0.1919191919191919,
+      "auto_act_fp": 0,
+      "effective_recall": 0.8181818181818182,
+      "review_queue_volume": 779,
+      "behavioral_total_cost": 30500.0,
+      "routing_total_cost_best": 149250.0,
+      "routing_total_cost_worst": 188850.0
+    },
+    {
+      "seed": 43,
+      "n_test_accounts": 3530,
+      "n_true_ac": 219,
+      "behavioral_precision": 0.936,
+      "behavioral_recall": 0.5342,
+      "behavioral_f1": 0.6802,
+      "structural_precision": 1.0,
+      "structural_recall": 0.3059,
+      "structural_f1": 0.4685,
+      "fused_precision": 1.0,
+      "fused_recall": 0.5845,
+      "fused_f1": 0.7378,
+      "auto_act_precision": 1.0,
+      "auto_act_recall": 0.2374429223744292,
+      "auto_act_fp": 0,
+      "effective_recall": 0.8401826484018264,
+      "review_queue_volume": 1701,
+      "behavioral_total_cost": 208000.0,
+      "routing_total_cost_best": 286650.0,
+      "routing_total_cost_worst": 325150.0
+    },
+    {
+      "seed": 44,
+      "n_test_accounts": 3465,
+      "n_true_ac": 185,
+      "behavioral_precision": 0.8929,
+      "behavioral_recall": 0.2703,
+      "behavioral_f1": 0.4149,
+      "structural_precision": 1.0,
+      "structural_recall": 0.1784,
+      "structural_f1": 0.3028,
+      "fused_precision": 1.0,
+      "fused_recall": 0.2054,
+      "fused_f1": 0.3408,
+      "auto_act_precision": 1.0,
+      "auto_act_recall": 0.11351351351351352,
+      "auto_act_fp": 0,
+      "effective_recall": 0.7837837837837838,
+      "review_queue_volume": 1238,
+      "behavioral_total_cost": 273000.0,
+      "routing_total_cost_best": 221700.0,
+      "routing_total_cost_worst": 265700.0
+    }
+  ],
+  "summary": {
+    "n_test_accounts": {
+      "mean": 3487.3333,
+      "min": 3465.0,
+      "max": 3530.0
+    },
+    "n_true_ac": {
+      "mean": 200.6667,
+      "min": 185.0,
+      "max": 219.0
+    },
+    "behavioral_precision": {
+      "mean": 0.904,
+      "min": 0.8832,
+      "max": 0.936
+    },
+    "behavioral_recall": {
+      "mean": 0.5863,
+      "min": 0.2703,
+      "max": 0.9545
+    },
+    "behavioral_f1": {
+      "mean": 0.6709,
+      "min": 0.4149,
+      "max": 0.9175
+    },
+    "structural_precision": {
+      "mean": 0.9278,
+      "min": 0.7833,
+      "max": 1.0
+    },
+    "structural_recall": {
+      "mean": 0.2406,
+      "min": 0.1784,
+      "max": 0.3059
+    },
+    "structural_f1": {
+      "mean": 0.3785,
+      "min": 0.3028,
+      "max": 0.4685
+    },
+    "fused_precision": {
+      "mean": 1.0,
+      "min": 1.0,
+      "max": 1.0
+    },
+    "fused_recall": {
+      "mean": 0.366,
+      "min": 0.2054,
+      "max": 0.5845
+    },
+    "fused_f1": {
+      "mean": 0.5165,
+      "min": 0.3408,
+      "max": 0.7378
+    },
+    "auto_act_precision": {
+      "mean": 1.0,
+      "min": 1.0,
+      "max": 1.0
+    },
+    "auto_act_recall": {
+      "mean": 0.181,
+      "min": 0.1135,
+      "max": 0.2374
+    },
+    "auto_act_fp": {
+      "mean": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "effective_recall": {
+      "mean": 0.814,
+      "min": 0.7838,
+      "max": 0.8402
+    },
+    "review_queue_volume": {
+      "mean": 1239.3333,
+      "min": 779.0,
+      "max": 1701.0
+    },
+    "behavioral_total_cost": {
+      "mean": 170500.0,
+      "min": 30500.0,
+      "max": 273000.0
+    },
+    "routing_total_cost_best": {
+      "mean": 219200.0,
+      "min": 149250.0,
+      "max": 286650.0
+    },
+    "routing_total_cost_worst": {
+      "mean": 259900.0,
+      "min": 188850.0,
+      "max": 325150.0
+    }
+  }
+}

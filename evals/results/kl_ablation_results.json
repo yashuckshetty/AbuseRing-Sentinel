@@ -1,0 +1,110 @@
+{
+  "full_test_split": {
+    "kl_routing": {
+      "name": "KL-Routing Engine (KL=0.5)",
+      "n_total": 3467,
+      "n_ac": 198,
+      "counts": {
+        "ACT": 38,
+        "REVIEW": 779,
+        "WAIT_MONITOR": 2614,
+        "ABSTAIN": 36
+      },
+      "ac_breakdown": {
+        "AC_in_ACT": 38,
+        "AC_in_REVIEW": 124,
+        "AC_in_WAIT": 0,
+        "AC_in_ABSTAIN": 36
+      },
+      "non_ac_breakdown": {
+        "NonAC_in_ACT_FP": 0,
+        "NonAC_in_REVIEW": 655,
+        "NonAC_in_WAIT": 2614,
+        "NonAC_in_ABSTAIN": 0
+      },
+      "direct_precision": 1.0,
+      "direct_recall": 0.1919,
+      "effective_recall": 0.8182,
+      "costs": {
+        "cost_fp": 0.0,
+        "cost_review": 116850.0,
+        "cost_fn_wait": 0.0,
+        "cost_abs_wait": 32400.0,
+        "cost_abs_fn": 72000.0,
+        "total_cost_best": 149250.0,
+        "total_cost_worst": 188850.0
+      }
+    },
+    "threshold_ablation": {
+      "name": "Threshold-Only Ablation (No KL / No Review)",
+      "n_total": 3467,
+      "n_ac": 198,
+      "counts": {
+        "ACT": 55,
+        "REVIEW": 0,
+        "WAIT_MONITOR": 3376,
+        "ABSTAIN": 36
+      },
+      "ac_breakdown": {
+        "AC_in_ACT": 55,
+        "AC_in_REVIEW": 0,
+        "AC_in_WAIT": 107,
+        "AC_in_ABSTAIN": 36
+      },
+      "non_ac_breakdown": {
+        "NonAC_in_ACT_FP": 0,
+        "NonAC_in_REVIEW": 0,
+        "NonAC_in_WAIT": 3269,
+        "NonAC_in_ABSTAIN": 0
+      },
+      "direct_precision": 1.0,
+      "direct_recall": 0.2778,
+      "effective_recall": 0.2778,
+      "costs": {
+        "cost_fp": 0.0,
+        "cost_review": 0.0,
+        "cost_fn_wait": 214000.0,
+        "cost_abs_wait": 32400.0,
+        "cost_abs_fn": 72000.0,
+        "total_cost_best": 246400.0,
+        "total_cost_worst": 286000.0
+      }
+    }
+  },
+  "subsets": {
+    "hard_bc": {
+      "subset_name": "Hard BC (Benign Family + Shared Payout)",
+      "n_accounts": 101,
+      "kl_routing": {
+        "WAIT_MONITOR": 88,
+        "REVIEW": 13
+      },
+      "threshold_ablation": {
+        "WAIT_MONITOR": 101
+      }
+    },
+    "referral_farming": {
+      "subset_name": "Referral Farming (Unseen Structure)",
+      "n_accounts": 143,
+      "kl_routing": {
+        "REVIEW": 107,
+        "ABSTAIN": 36
+      },
+      "threshold_ablation": {
+        "WAIT_MONITOR": 107,
+        "ABSTAIN": 36
+      }
+    },
+    "sleeper_accounts": {
+      "subset_name": "Sleeper Accounts (Sparse Evidence)",
+      "n_accounts": 19,
+      "kl_routing": {
+        "ACT": 10,
+        "REVIEW": 9
+      },
+      "threshold_ablation": {
+        "ACT": 19
+      }
+    }
+  }
+}

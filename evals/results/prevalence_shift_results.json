@@ -1,0 +1,107 @@
+[
+  {
+    "regime_name": "Low Prevalence (~3% AC)",
+    "target_ac_prevalence": 0.03,
+    "test_total_accounts": 3838,
+    "test_true_ac": 67,
+    "actual_ac_prevalence": 0.0175,
+    "auto_act_precision": 1.0,
+    "auto_act_recall": 0.5224,
+    "effective_recall": 0.9254,
+    "auto_act_fp": 0,
+    "fp_rate_on_non_ac": 0.0,
+    "routing_distribution": {
+      "ACT": 35,
+      "REVIEW": 844,
+      "WAIT_MONITOR": 2954,
+      "ABSTAIN": 5
+    },
+    "ac_routing": {
+      "ACT": 35,
+      "REVIEW": 27,
+      "WAIT_MONITOR": 0,
+      "ABSTAIN": 5
+    },
+    "review_queue_volume": 844,
+    "behavioral_only": {
+      "precision": 0.6667,
+      "recall": 0.9552,
+      "f1": 0.7853,
+      "fp": 32,
+      "fn": 3,
+      "cost": 22000.0
+    },
+    "routing_total_cost_best": 131100.0,
+    "routing_total_cost_worst": 136600.0
+  },
+  {
+    "regime_name": "Baseline Prevalence (~15% AC)",
+    "target_ac_prevalence": 0.15,
+    "test_total_accounts": 3467,
+    "test_true_ac": 198,
+    "actual_ac_prevalence": 0.0571,
+    "auto_act_precision": 1.0,
+    "auto_act_recall": 0.1919,
+    "effective_recall": 0.8182,
+    "auto_act_fp": 0,
+    "fp_rate_on_non_ac": 0.0,
+    "routing_distribution": {
+      "ACT": 38,
+      "REVIEW": 779,
+      "WAIT_MONITOR": 2614,
+      "ABSTAIN": 36
+    },
+    "ac_routing": {
+      "ACT": 38,
+      "REVIEW": 124,
+      "WAIT_MONITOR": 0,
+      "ABSTAIN": 36
+    },
+    "review_queue_volume": 779,
+    "behavioral_only": {
+      "precision": 0.8832,
+      "recall": 0.9545,
+      "f1": 0.9175,
+      "fp": 25,
+      "fn": 9,
+      "cost": 30500.0
+    },
+    "routing_total_cost_best": 149250.0,
+    "routing_total_cost_worst": 188850.0
+  },
+  {
+    "regime_name": "High Prevalence (~30% AC)",
+    "target_ac_prevalence": 0.3,
+    "test_total_accounts": 3155,
+    "test_true_ac": 406,
+    "actual_ac_prevalence": 0.1287,
+    "auto_act_precision": 1.0,
+    "auto_act_recall": 0.1576,
+    "effective_recall": 0.7956,
+    "auto_act_fp": 0,
+    "fp_rate_on_non_ac": 0.0,
+    "routing_distribution": {
+      "ACT": 64,
+      "REVIEW": 905,
+      "WAIT_MONITOR": 2103,
+      "ABSTAIN": 83
+    },
+    "ac_routing": {
+      "ACT": 64,
+      "REVIEW": 259,
+      "WAIT_MONITOR": 0,
+      "ABSTAIN": 83
+    },
+    "review_queue_volume": 905,
+    "behavioral_only": {
+      "precision": 0.9447,
+      "recall": 0.9261,
+      "f1": 0.9353,
+      "fp": 22,
+      "fn": 30,
+      "cost": 71000.0
+    },
+    "routing_total_cost_best": 210450.0,
+    "routing_total_cost_worst": 301750.0
+  }
+]

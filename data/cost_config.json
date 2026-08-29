@@ -1,0 +1,7 @@
+{
+  "c_false_positive": 500.0,
+  "c_false_negative": 2000.0,
+  "c_review": 150.0,
+  "c_wait_per_day": 50.0,
+  "_note": "All values are SIMULATED assumptions. See data/ASSUMPTIONS.md."
+}

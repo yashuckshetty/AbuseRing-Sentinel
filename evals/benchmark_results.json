@@ -1,0 +1,28 @@
+{
+  "robustness": {
+    "cold_start": {
+      "n_cold_accounts": 135,
+      "f1_abusive_cold": 0.9811,
+      "label_dist": {
+        "benign_independent": 83,
+        "abusive_coordinated": 52
+      },
+      "_note": "Cold-start: accounts with <=2 orders. Degraded performance expected."
+    },
+    "edge_drop_50pct": {
+      "drop_fraction": 0.5,
+      "edges_original": 135195,
+      "edges_after_drop": 67598,
+      "f1_abusive_sparse": 0.9737,
+      "_note": "50% of graph edges removed."
+    },
+    "benign_dense_stress": {
+      "n_total": 6176,
+      "bc_fraction": 0.614,
+      "fp_count": 2,
+      "fn_count": 0,
+      "f1_abusive_dense": 0.9867,
+      "_note": "BC oversampled 4x. Tests FP rate in benign-dense environment."
+    }
+  }
+}
