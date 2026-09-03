@@ -12,8 +12,8 @@
     "recall_benign_indep": 0.9209,
     "f1_benign_indep": 0.9339,
     "roc_auc_macro": 0.9074,
-    "training_time_sec": 9.684,
-    "inference_ms_per_account": 0.076,
+    "training_time_sec": 12.969,
+    "inference_ms_per_account": 0.106,
     "total_test_accounts": 3467
   },
   "structural_lgbm_test_metrics": {
@@ -23,7 +23,7 @@
     "recall_abusive": 0.2374,
     "f1_abusive": 0.3643,
     "roc_auc_macro": 0.8776,
-    "inference_ms_per_account": 0.014
+    "inference_ms_per_account": 0.04
   },
   "robustness_subsets": {
     "referral_farming": {

@@ -9,6 +9,7 @@ import pytest
 from fastapi.testclient import TestClient
 from api.main import app
 
+BASE_DIR = Path(__file__).resolve().parent.parent
 client = TestClient(app)
 
 

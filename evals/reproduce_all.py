@@ -65,7 +65,7 @@ for d in ["data/prevalence_low", "data/prevalence_high", "data/seed_43", "data/s
 def run_cmd(cmd_list, desc):
     print(f"\n[{desc}] Running: {' '.join(cmd_list)}", flush=True)
     t0 = time.time()
-    res = subprocess.run(cmd_list, capture_output=True, text=True, encoding="utf-8")
+    res = subprocess.run(cmd_list, capture_output=True, text=True, encoding="utf-8", errors="replace")
     dt = time.time() - t0
     if res.returncode != 0:
         print(f"  FAILED in {dt:.2f}s!")

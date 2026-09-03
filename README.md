@@ -66,7 +66,7 @@ AbuseRing Sentinel/
 +-- evals/
 |   +-- handcrafted_adversarial.py# 25-topology independent stress battery
 |   +-- metrics.json              # Stored evaluation results per model per split
-+-- tests/                        # 117 tests across 14 test modules (100% pass)
++-- tests/                        # 118 tests across 14 test modules (100% pass)
 +-- conftest.py
 ```
 
