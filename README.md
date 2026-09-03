@@ -5,6 +5,8 @@ Detects coordinated abusive accounts (AC rings) that exploit promotional codes
 through shared payout destinations, devices, and IPs, using a behavioural x
 structural x AI evidence fusion pipeline with a cost-aware decision layer.
 
+Across the held-out test window of 198 coordinated abuse accounts ([`evals/metrics.json`](evals/metrics.json)), AbuseRing Sentinel directly auto-actions **38 accounts ($19.19\%$) with exactly 0 false positives** in the auto-ACT lane, and safely routes **124 additional accounts ($62.63\%$) to human review** via evidence-divergence tripwires ($81.82\%$ effective recall via routing; 36 accounts with $n_{\text{orders}} < 2$ held in ABSTAIN). The core architectural claim of AbuseRing Sentinel is not that every coordinated attacker is autonomously blocked, but that no enforcement decision is automated that independent evidence channels do not concordantly support.
+
 > **All data is fully synthetic.** No real transaction, account, or PII data is
 > used anywhere. All cost figures are illustrative assumptions. See
 > `data/ASSUMPTIONS.md` for the full contract.
@@ -41,6 +43,7 @@ structural x AI evidence fusion pipeline with a cost-aware decision layer.
 AbuseRing Sentinel/
 +-- data/
 |   +-- simulator.py              # Synthetic dataset generator (v2.0)
+|   +-- curated_cases.py          # Single-source curated representative accounts
 |   +-- ASSUMPTIONS.md            # Full data contract and limitations
 |   +-- cost_config.json          # Simulated cost constants
 |   +-- events.parquet            # ~41k synthetic events
@@ -66,7 +69,9 @@ AbuseRing Sentinel/
 +-- evals/
 |   +-- handcrafted_adversarial.py# 25-topology independent stress battery
 |   +-- metrics.json              # Stored evaluation results per model per split
-+-- tests/                        # 118 tests across 14 test modules (100% pass)
++-- demo.py                       # Deterministic 5-act offline narrative walkthrough
++-- DEMO.md                       # 5-minute video presentation guide + click-path
++-- tests/                        # 119 tests across 15 test modules (100% pass)
 +-- conftest.py
 ```
 
@@ -92,7 +97,7 @@ Open **`http://localhost:8000`** in your browser.
 
 ### Option 2: One-Command Local Script (Linux / macOS / Windows)
 
-Run environment dependency verification, execute the full 118-test pytest suite, and launch the server automatically:
+Run environment dependency verification, execute the full 119-test pytest suite, and launch the server automatically:
 
 ```bash
 # On Linux / macOS:
@@ -114,7 +119,7 @@ source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 # 2. Install dependencies
 pip install -r requirements.txt
 
-# 3. Run full regression test suite (118 tests)
+# 3. Run full regression test suite (119 tests)
 python -m pytest tests/ -v
 
 # 4. Start the interactive dashboard and API
@@ -451,7 +456,7 @@ Strict boundary contracts enforced and validated on all outputs:
 
 ## Test suite
 
-118 automated tests across 14 test modules (100% pass rate). All stage integration tests load real v2.0 parquet
+119 automated tests across 15 test modules (100% pass rate). All stage integration tests load real v2.0 parquet
 output -- no mocked fixtures for data-level assertions.
 
 | Module | Tests | Scope & Invariants Verified |
@@ -469,11 +474,12 @@ output -- no mocked fixtures for data-level assertions.
 | [`test_gateway_adapter.py`](tests/test_gateway_adapter.py) | 7 | Gateway bridge: sync vs async dual-path execution, HMAC verification, divergence routing |
 | [`test_temporal_escalation.py`](tests/test_temporal_escalation.py) | 4 | Lifecycle state machine: state transitions, 19 late-forming ring lead time decomposition |
 | [`test_handcrafted_adversarial.py`](tests/test_handcrafted_adversarial.py) | 5 | 25 out-of-distribution deterministic topologies: 85.2% recall vs 54.3% naive fusion |
+| [`test_demo.py`](tests/test_demo.py) | 1 | Demo narrative verification: 5-act offline execution, all 6 curated decisions asserted |
 | [`test_api.py`](tests/test_api.py) | 28 | FastAPI endpoint contracts: model ladder, decisions, gateway, temporal, handcrafted battery |
 
 ```bash
 python -m pytest tests/ -v
-# Expected: 118 passed (100%)
+# Expected: 119 passed (100%)
 ```
 
 ---
