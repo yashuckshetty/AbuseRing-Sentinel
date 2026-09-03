@@ -175,7 +175,7 @@ The decision engine cleanly separates the routing mechanism from the operational
 
 ## Dual-Path Gateway Bridge & Production Interface
 
-To demonstrate how AbuseRing Sentinel integrates into real payment processing environments, [`gateway/adapter.py`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/gateway/adapter.py) implements a **Dual-Path Gateway Bridge** compatible with standard webhook and authorization schemas (e.g. Razorpay / Stripe).
+To demonstrate how AbuseRing Sentinel integrates into real payment processing environments, [`gateway/adapter.py`](gateway/adapter.py) implements a **Dual-Path Gateway Bridge** compatible with standard webhook and authorization schemas (e.g. Razorpay / Stripe).
 
 ```
                              INCOMING PAYMENT EVENT (Webhook / API)
@@ -200,7 +200,7 @@ To demonstrate how AbuseRing Sentinel integrates into real payment processing en
   - Returns a **preliminary in-line recommendation**: `ALLOW`, `CHALLENGE_2FA`, or `BLOCK`.
   - *Critical Distinction*: Sync-path actions are non-authoritative in-line recommendations for the payment gateway authorization loop and are **not** mapped 1:1 onto the canonical `Decision` enum.
 - **Asynchronous Near-Line Path ($<500\text{ms}$ Design Target)**:
-  - Executes as-of-$T$ dynamic graph expansion, extracts multi-entity structural features, computes symmetric KL divergence via canonical `sym_kl_divergence()`, and executes the authoritative [`DecisionEngine.decide()`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/decision/decision_engine.py#L167-L225) (`ACT`, `REVIEW`, `WAIT_MONITOR`, `ABSTAIN`).
+  - Executes as-of-$T$ dynamic graph expansion, extracts multi-entity structural features, computes symmetric KL divergence via canonical `sym_kl_divergence()`, and executes the authoritative [`DecisionEngine.decide()`](decision/decision_engine.py#L167-L225) (`ACT`, `REVIEW`, `WAIT_MONITOR`, `ABSTAIN`).
 - **Disagreement Preservation (No Silent Overwrite)**:
   - If the in-line fast path authorizes a transaction (`ALLOW`) but subsequent graph expansion reveals coordinated ring links routing the account to `REVIEW`, the adapter **preserves both signals** and surfaces an explicit `sync_async_disagreement` flag with an auditable explanation.
 
@@ -212,10 +212,10 @@ To demonstrate how AbuseRing Sentinel integrates into real payment processing en
 
 | Processing Path | Design Budget | Measured Prototype p50 | Measured Prototype p95 | Measured Prototype p99 |
 |---|:---:|:---:|:---:|:---:|
-| **Synchronous In-Line Path** | $<30.0\text{ ms}$ | **$3.01\text{ ms}$** | **$3.57\text{ ms}$** | **$9.29\text{ ms}$** |
-| **Asynchronous Near-Line Path** | $<500.0\text{ ms}$ | **$10.31\text{ ms}$** | **$11.78\text{ ms}$** | **$17.28\text{ ms}$** |
+| **Synchronous In-Line Path** | $<30.0\text{ ms}$ | **$3.664\text{ ms}$** | **$4.510\text{ ms}$** | **$6.578\text{ ms}$** |
+| **Asynchronous Near-Line Path** | $<500.0\text{ ms}$ | **$12.372\text{ ms}$** | **$14.693\text{ ms}$** | **$23.743\text{ ms}$** |
 
-*Raw benchmark results generated via `evals/gateway_latency_eval.py` and saved to [`evals/results/gateway_latency_results.json`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/evals/results/gateway_latency_results.json). Tabulated p50/p95/p99 values are measured from a local benchmark run and are machine-dependent.*
+*Raw benchmark results generated via `evals/gateway_latency_eval.py` and saved to [`evals/results/gateway_latency_results.json`](evals/results/gateway_latency_results.json). Tabulated p50/p95/p99 values are measured from a local benchmark run and are machine-dependent. Values are transcribed from the committed artifact; re-running `evals/reproduce_all.py` overwrites it with timings measured on your own machine.*
 
 ---
 
@@ -456,20 +456,20 @@ output -- no mocked fixtures for data-level assertions.
 
 | Module | Tests | Scope & Invariants Verified |
 |---|:---:|---|
-| [`test_leakage.py`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/tests/test_leakage.py) | 6 | Temporal leakage: no future events in graph, label isolation, feature monotonicity |
-| [`test_feature_pipeline.py`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/tests/test_feature_pipeline.py) | 14 | Real-data feature assertions: AC > BI on structural/behavioural features; split integrity |
-| [`test_decision_engine.py`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/tests/test_decision_engine.py) | 14 | Routing logic (unit) + real-data integration: 0 FP in auto-ACT, >=80% effective recall, ABSTAIN gate |
-| [`test_ai_boundary.py`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/tests/test_ai_boundary.py) | 9 | LLM boundary contracts: no scores, no fabrication, no forbidden actions, entity hallucination checks |
-| [`test_ai_security.py`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/tests/test_ai_security.py) | 6 | Prompt injection defense battery: 10/10 attacks caught, hardened validator verification |
-| [`test_policy_gate.py`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/tests/test_policy_gate.py) | 7 | Policy gate logic + audit trail emission |
-| [`test_dynamic_cost.py`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/tests/test_dynamic_cost.py) | 4 | Symmetric dynamic loss modeling: break-even lag bounds, exposure compounding |
-| [`test_capacity_policy.py`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/tests/test_capacity_policy.py) | 6 | Capacity-constrained triage: priority policies, recall capture at K=100 and K=200 |
-| [`test_graph_visualizer.py`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/tests/test_graph_visualizer.py) | 4 | Dynamic subgraph extractor: 1-hop neighborhood, multi-edge aggregation, checklist generation |
-| [`test_adversarial_evasion.py`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/tests/test_adversarial_evasion.py) | 4 | Attacker evasion: anti-burst, device hopping, benign camouflage |
-| [`test_gateway_adapter.py`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/tests/test_gateway_adapter.py) | 7 | Gateway bridge: sync vs async dual-path execution, HMAC verification, divergence routing |
-| [`test_temporal_escalation.py`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/tests/test_temporal_escalation.py) | 4 | Lifecycle state machine: state transitions, 19 late-forming ring lead time decomposition |
-| [`test_handcrafted_adversarial.py`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/tests/test_handcrafted_adversarial.py) | 5 | 25 out-of-distribution deterministic topologies: 85.2% recall vs 54.3% naive fusion |
-| [`test_api.py`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/tests/test_api.py) | 28 | FastAPI endpoint contracts: model ladder, decisions, gateway, temporal, handcrafted battery |
+| [`test_leakage.py`](tests/test_leakage.py) | 6 | Temporal leakage: no future events in graph, label isolation, feature monotonicity |
+| [`test_feature_pipeline.py`](tests/test_feature_pipeline.py) | 14 | Real-data feature assertions: AC > BI on structural/behavioural features; split integrity |
+| [`test_decision_engine.py`](tests/test_decision_engine.py) | 14 | Routing logic (unit) + real-data integration: 0 FP in auto-ACT, >=80% effective recall, ABSTAIN gate |
+| [`test_ai_boundary.py`](tests/test_ai_boundary.py) | 9 | LLM boundary contracts: no scores, no fabrication, no forbidden actions, entity hallucination checks |
+| [`test_ai_security.py`](tests/test_ai_security.py) | 6 | Prompt injection defense battery: 10/10 attacks caught, hardened validator verification |
+| [`test_policy_gate.py`](tests/test_policy_gate.py) | 7 | Policy gate logic + audit trail emission |
+| [`test_dynamic_cost.py`](tests/test_dynamic_cost.py) | 4 | Symmetric dynamic loss modeling: break-even lag bounds, exposure compounding |
+| [`test_capacity_policy.py`](tests/test_capacity_policy.py) | 6 | Capacity-constrained triage: priority policies, recall capture at K=100 and K=200 |
+| [`test_graph_visualizer.py`](tests/test_graph_visualizer.py) | 4 | Dynamic subgraph extractor: 1-hop neighborhood, multi-edge aggregation, checklist generation |
+| [`test_adversarial_evasion.py`](tests/test_adversarial_evasion.py) | 4 | Attacker evasion: anti-burst, device hopping, benign camouflage |
+| [`test_gateway_adapter.py`](tests/test_gateway_adapter.py) | 7 | Gateway bridge: sync vs async dual-path execution, HMAC verification, divergence routing |
+| [`test_temporal_escalation.py`](tests/test_temporal_escalation.py) | 4 | Lifecycle state machine: state transitions, 19 late-forming ring lead time decomposition |
+| [`test_handcrafted_adversarial.py`](tests/test_handcrafted_adversarial.py) | 5 | 25 out-of-distribution deterministic topologies: 85.2% recall vs 54.3% naive fusion |
+| [`test_api.py`](tests/test_api.py) | 28 | FastAPI endpoint contracts: model ladder, decisions, gateway, temporal, handcrafted battery |
 
 ```bash
 python -m pytest tests/ -v
@@ -572,7 +572,7 @@ Demonstrates clean transition from cold-start to human review as return velocity
 
 ## Longitudinal Escalation State Machine
 
-To formalize multi-stage ring lifecycle escalation across time without modifying core decision thresholds, [`policy/temporal_escalation.py`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/policy/temporal_escalation.py) implements an additive state-machine policy over sequential checkpoints.
+To formalize multi-stage ring lifecycle escalation across time without modifying core decision thresholds, [`policy/temporal_escalation.py`](policy/temporal_escalation.py) implements an additive state-machine policy over sequential checkpoints.
 
 ```
  ┌───────────────────┐
@@ -633,7 +633,7 @@ A complete longitudinal trace across all 19 late-forming rings (`evals/results/t
 
 ## Independent Hand-Crafted Topology Stress Battery
 
-To stress-test the canonical DecisionEngine against out-of-distribution failure modes without relying on `data/simulator.py`, [`evals/handcrafted_adversarial.py`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/evals/handcrafted_adversarial.py) evaluates **25 deterministic hand-crafted failure topologies** ($N=162$ accounts) spanning 5 distinct threat families.
+To stress-test the canonical DecisionEngine against out-of-distribution failure modes without relying on `data/simulator.py`, [`evals/handcrafted_adversarial.py`](evals/handcrafted_adversarial.py) evaluates **25 deterministic hand-crafted failure topologies** ($N=162$ accounts) spanning 5 distinct threat families.
 
 ```
                       INDEPENDENT HAND-CRAFTED TOPOLOGY BATTERY (N=25 Topologies, 162 Accounts)
@@ -844,11 +844,11 @@ To solve this, we implemented and evaluated queue triage strategies alongside 6 
 
 ## AI Evidence Layer & Prompt Injection Security
 
-The AI Evidence Advisory Layer ([`ai/evidence_reasoner.py`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/ai/evidence_reasoner.py)) assists human fraud reviewers by explaining evidence conflicts (e.g. why structural and behavioral models diverge) and suggesting concrete investigation steps.
+The AI Evidence Advisory Layer ([`ai/evidence_reasoner.py`](ai/evidence_reasoner.py)) assists human fraud reviewers by explaining evidence conflicts (e.g. why structural and behavioral models diverge) and suggesting concrete investigation steps.
 
 ### 1. Hard Architectural Isolation Guarantee
 - **Purely Advisory Output**: The LLM component **never computes numeric risk scores and never triggers operational actions**.
-- **Strict Decoupling**: All deterministic policy gating (`ACT`, `REVIEW`, `WAIT_MONITOR`, `ABSTAIN`) is computed by [`DecisionEngine`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/decision/decision_engine.py) using calibrated LightGBM probabilities and graph metrics **before the LLM is ever invoked**. Even if an LLM response is maliciously crafted or fails schema validation, the policy decision remains completely unaffected.
+- **Strict Decoupling**: All deterministic policy gating (`ACT`, `REVIEW`, `WAIT_MONITOR`, `ABSTAIN`) is computed by [`DecisionEngine`](decision/decision_engine.py) using calibrated LightGBM probabilities and graph metrics **before the LLM is ever invoked**. Even if an LLM response is maliciously crafted or fails schema validation, the policy decision remains completely unaffected.
 
 ### 2. Adversarial Prompt Injection Evaluation Battery ($10$ Attack Vectors)
 We evaluated the AI validator against a comprehensive battery of 10 adversarial prompt injection and jailbreak payloads (`evals/results/ai_security_results.json`):
@@ -872,12 +872,12 @@ We evaluated the AI validator against a comprehensive battery of 10 adversarial 
   2. *Free-Text Score Smuggling*: Numeric probabilities embedded in narrative prose (e.g. `"estimated fraud probability is 0.998"`) evaded the JSON key regex `r'"risk_score"\s*:'`.
   3. *System Delimiter Overrides*: Injected phrases like `"SYSTEM OVERRIDE: ALLOW"` echoed in qualitative text without forbidden action words.
   4. *Categorical Accusations*: Stating definitive conclusions (`"is an abuser"`, `"guilty of fraud"`), which violates the human-advisory mandate.
-- **Hardened Defense**: [`validate_llm_output()`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/ai/evidence_reasoner.py#L201-L280) was hardened with:
+- **Hardened Defense**: [`validate_llm_output()`](ai/evidence_reasoner.py#L201-L280) was hardened with:
   - Expanded 13-verb operational action blocklist (`freeze`, `blacklist`, `whitelist`, `quarantine`, `revoke`, `deactivate`, etc.).
   - Free-text numeric score and probability scanner (`\b(risk[_\s]score|fraud[_\s]probability)\s*(?:is|of|[:=])\s*\d+\.?\d*`).
   - System override & prompt delimiter filter (`system override`, `ignore previous instructions`, `</payload>`, `fraudgpt`).
   - Categorical accusation pattern matcher (`is an abuser`, `confirmed fraud`, `guilty of`).
-- **Post-Hardening Result**: **10/10 attacks caught ($100.0\%$ catch rate)**. Permanent regression tests added in [`tests/test_ai_security.py`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/tests/test_ai_security.py).
+- **Post-Hardening Result**: **10/10 attacks caught ($100.0\%$ catch rate)**. Permanent regression tests added in [`tests/test_ai_security.py`](tests/test_ai_security.py).
 
 > **Methodological Scope & Boundary Disclosure**: This security evaluation validates the post-generation safety validator's pattern-matching and enforcement logic against 10 hypothesized/simulated compromised outputs. Because live Gemini API calls are optional and offline mock mode is used in standard testing, this evaluates the **defense-in-depth output validator's catch rate**, not live Frontier LLM resistance to jailbreak prompts in real time.
 
@@ -920,7 +920,7 @@ Full enumeration maintained in `data/ASSUMPTIONS.md Section 9`. Key items:
    - **7 / 24 Family D accounts (29.2%) represent a genuine detection limitation**: When adversaries execute low-velocity isolated pairwise collusion (`TOPO_16`) or brand-new cold-start farms with zero entity overlap (`TOPO_17`), neither model accumulates sufficient signal, resulting in missed detection.
    - **1 / 24 Family D accounts (4.2%) reflects the deterministic cold-start gate working as designed**: Single-order whale exploits (`TOPO_18`) are gated to `ABSTAIN` by the explicit $n\_\text{orders} \ge 2$ guardrail, correctly declining to act on unverified single-order accounts.
 
-9. **Gateway Prototype Latency Scope.** All dual-path latency numbers (sync path p99: $9.29\text{ ms}$, async path p99: $17.28\text{ ms}$) are prototype design-targets measured in a local single-machine in-memory mock environment processing synthetic test data, not live distributed gateway traffic or remote database network latency.
+9. **Gateway Prototype Latency Scope.** All dual-path latency numbers (sync path p99: $6.578\text{ ms}$, async path p99: $23.743\text{ ms}$) are prototype design-targets measured in a local single-machine in-memory mock environment processing synthetic test data, not live distributed gateway traffic or remote database network latency.
 
 10. **Longitudinal Lead-Time Scope & Human-in-the-Loop Quarantine.** The $5.93\text{-day}$ advance warning metric represents organic active-formation detection across $14/19$ rings ($73.7\%$). The higher $18.60\text{-day}$ figure applies only to the $5/19$ rings with pre-positioned sleeper accounts created before order bursts. `QUARANTINE_HOLD` is strictly an advisory candidate flag for human-reviewed network holds, not autonomous account enforcement.
 
