@@ -1,0 +1,83 @@
+{
+  "account_id": "ACC_03653",
+  "category": "Hard BC",
+  "decision": "WAIT_MONITOR",
+  "routing_lane": "fused_auto",
+  "sym_kl_divergence": 0.0005,
+  "evidence_conflict": false,
+  "probabilities": {
+    "p_abusive_structural": 0.0,
+    "p_abusive_behavioral": 0.0,
+    "p_abusive_fused": 0.0,
+    "p_benign_coord_fused": 0.9999,
+    "p_benign_indep_fused": 0.0
+  },
+  "input_payload": {
+    "account_id": "ACC_03653",
+    "structural_sub_score": 0.0,
+    "behavioral_sub_score": 0.0,
+    "p_abusive": 0.0,
+    "p_benign_coord": 0.9999,
+    "p_benign_indep": 0.0,
+    "sym_kl_divergence": 0.0005,
+    "evidence_conflict": false,
+    "conflict_reason": "Structural=0.000 vs Behavioral=0.000 (sym_KL=0.001)",
+    "n_orders": 12,
+    "n_returns": 0,
+    "return_rate": 0.0,
+    "promo_rate": 0.083,
+    "has_promo": 1,
+    "n_referrals_received": 1,
+    "n_referrals_sent": 1,
+    "burst_score": 2,
+    "account_age_days": 88.5,
+    "observation_window_days": 88.5,
+    "shared_payout_degree": 6,
+    "shared_device_degree": 10,
+    "shared_ip_degree": 12,
+    "referral_degree": 2,
+    "multi_signal_edges": 4,
+    "connected_component_size": 4987,
+    "known_ring_ids": [],
+    "known_shared_entity_ids": [],
+    "as_of_ts": 1707776000
+  },
+  "real_llm_response": {
+    "conflict_explanation": "Structural and behavioral sub-scores are fully aligned at 0.0 with a minimal symmetric KL divergence of 0.0005, indicating no conflict between structural and behavioral signals.",
+    "key_signals": [
+      "Account ACC_03653 demonstrates high network overlap, including a shared IP degree of 12, shared device degree of 10, and shared payout degree of 6.",
+      "The account resides in a large connected component of 4,987 nodes, with model estimates favoring benign coordination (0.9999 probability).",
+      "Transactional activity shows 12 orders, 0 returns (0.0% return rate), and a low promo utilization rate of 8.3% over an 88.5-day account age."
+    ],
+    "analyst_suggestions": [
+      "Human reviewer should inspect the 10 shared device entities and 6 shared payout channels associated with ACC_03653 to differentiate household/institutional sharing from unauthorized account aggregation.",
+      "Human reviewer should evaluate the 12 shared IP connections and large connected component (4,987 nodes) to determine if common public or corporate network access accounts for the cluster size."
+    ],
+    "qualitative_assessment": "Evidence suggests potential benign coordination, as the account exhibits strong physical and network entity sharing alongside consistent non-abusive ordering patterns."
+  },
+  "mock_response": {
+    "conflict_explanation": "Account ACC_03653 shares infrastructure (shared_payout_degree=6, shared_device_degree=10, shared_ip_degree=12) but displays standard non-abusive purchasing patterns (behavioral_sub_score=0.000, burst_score=2, promo_rate=0.083). Evidence is consistent with benign family/household coordination rather than systematic exploitation.",
+    "key_signals": [
+      "shared_payout_degree=6",
+      "behavioral_sub_score=0.0000",
+      "structural_sub_score=0.0000",
+      "burst_score=2",
+      "sym_kl=0.0005",
+      "n_orders=12"
+    ],
+    "analyst_suggestions": [
+      "Confirm whether linked accounts share a common delivery address or household profile",
+      "Check if payment methods represent joint family accounts or standard shared instruments"
+    ],
+    "qualitative_assessment": "Consistent with legitimate family/household coordination; low probability of malicious intent.",
+    "_is_mock": true
+  },
+  "validation": {
+    "boundary_passed": true,
+    "violations": []
+  },
+  "latency": {
+    "real_llm_seconds": 15.0095,
+    "mock_seconds": 0.0028
+  }
+}

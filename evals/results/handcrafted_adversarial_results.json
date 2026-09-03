@@ -1,0 +1,644 @@
+{
+  "qualifier": "Independent out-of-distribution structural stress battery evaluated on N=25 deterministic failure topologies constructed without data/simulator.py; tests topological edge cases and routing robustness.",
+  "total_topologies_evaluated": 25,
+  "total_accounts_evaluated": 162,
+  "overall_naive_caught": 88,
+  "overall_sentinel_caught": 138,
+  "overall_naive_recall_pct": 54.32,
+  "overall_sentinel_effective_recall_pct": 85.19,
+  "total_cases_rescued_by_conflict_review": 117,
+  "family_breakdown": {
+    "Graph Camouflage": {
+      "total_accs": 44,
+      "naive_caught": 33,
+      "sentinel_caught": 43,
+      "review_rescued": 38
+    },
+    "Temporal & Sleeper": {
+      "total_accs": 27,
+      "naive_caught": 15,
+      "sentinel_caught": 27,
+      "review_rescued": 17
+    },
+    "Entity Manipulation": {
+      "total_accs": 30,
+      "naive_caught": 11,
+      "sentinel_caught": 30,
+      "review_rescued": 24
+    },
+    "Extreme Sparsity": {
+      "total_accs": 24,
+      "naive_caught": 10,
+      "sentinel_caught": 16,
+      "review_rescued": 16
+    },
+    "Hybrid / Evasion Stress": {
+      "total_accs": 37,
+      "naive_caught": 19,
+      "sentinel_caught": 22,
+      "review_rescued": 22
+    }
+  },
+  "topologies": [
+    {
+      "topo_id": "TOPO_01_DENSE_CLIQUE_CAMO",
+      "family": "Graph Camouflage",
+      "description": "Dense 6-node ring masking via high-degree benign merchant device",
+      "n_accounts": 6,
+      "mean_p_struct_ac": 0.9955,
+      "mean_p_behav_ac": 0.4662,
+      "mean_p_fused_ac": 0.9345,
+      "mean_sym_kl": 1.5099,
+      "decision_breakdown": {
+        "ACT": 0,
+        "REVIEW": 6,
+        "WAIT_MONITOR": 0,
+        "ABSTAIN": 0
+      },
+      "routing_lane_breakdown": {
+        "conflict_review": 6,
+        "fused_auto": 0,
+        "abstain": 0
+      },
+      "naive_geometric_caught": 6,
+      "sentinel_effective_caught": 6,
+      "conflict_review_rescue_count": 6
+    },
+    {
+      "topo_id": "TOPO_02_STAR_DISPERSION",
+      "family": "Graph Camouflage",
+      "description": "Star referral topology: central mule with 15 synthetic satellite accounts",
+      "n_accounts": 16,
+      "mean_p_struct_ac": 0.9332,
+      "mean_p_behav_ac": 0.4675,
+      "mean_p_fused_ac": 0.8781,
+      "mean_sym_kl": 2.1561,
+      "decision_breakdown": {
+        "ACT": 5,
+        "REVIEW": 10,
+        "WAIT_MONITOR": 0,
+        "ABSTAIN": 1
+      },
+      "routing_lane_breakdown": {
+        "conflict_review": 10,
+        "fused_auto": 5,
+        "abstain": 1
+      },
+      "naive_geometric_caught": 15,
+      "sentinel_effective_caught": 15,
+      "conflict_review_rescue_count": 10
+    },
+    {
+      "topo_id": "TOPO_03_BRIDGE_ISOLATION",
+      "family": "Graph Camouflage",
+      "description": "Two dense 4-node cliques joined solely by a single weak referral bridge",
+      "n_accounts": 8,
+      "mean_p_struct_ac": 0.1726,
+      "mean_p_behav_ac": 0.973,
+      "mean_p_fused_ac": 0.5875,
+      "mean_sym_kl": 3.9943,
+      "decision_breakdown": {
+        "ACT": 0,
+        "REVIEW": 8,
+        "WAIT_MONITOR": 0,
+        "ABSTAIN": 0
+      },
+      "routing_lane_breakdown": {
+        "conflict_review": 8,
+        "fused_auto": 0,
+        "abstain": 0
+      },
+      "naive_geometric_caught": 6,
+      "sentinel_effective_caught": 8,
+      "conflict_review_rescue_count": 8
+    },
+    {
+      "topo_id": "TOPO_04_CYCLE_CHAIN_DILUTION",
+      "family": "Graph Camouflage",
+      "description": "8-node referral cycle with synthetic low-amount volume dilution",
+      "n_accounts": 8,
+      "mean_p_struct_ac": 0.1444,
+      "mean_p_behav_ac": 0.001,
+      "mean_p_fused_ac": 0.0154,
+      "mean_sym_kl": 1.6577,
+      "decision_breakdown": {
+        "ACT": 0,
+        "REVIEW": 8,
+        "WAIT_MONITOR": 0,
+        "ABSTAIN": 0
+      },
+      "routing_lane_breakdown": {
+        "conflict_review": 8,
+        "fused_auto": 0,
+        "abstain": 0
+      },
+      "naive_geometric_caught": 0,
+      "sentinel_effective_caught": 8,
+      "conflict_review_rescue_count": 8
+    },
+    {
+      "topo_id": "TOPO_05_RANDOM_AFFILIATE_INJECTION",
+      "family": "Graph Camouflage",
+      "description": "Ring members injecting random legitimate affiliate codes to disrupt graph clustering",
+      "n_accounts": 6,
+      "mean_p_struct_ac": 0.9955,
+      "mean_p_behav_ac": 0.7394,
+      "mean_p_fused_ac": 0.9663,
+      "mean_sym_kl": 0.6809,
+      "decision_breakdown": {
+        "ACT": 0,
+        "REVIEW": 6,
+        "WAIT_MONITOR": 0,
+        "ABSTAIN": 0
+      },
+      "routing_lane_breakdown": {
+        "conflict_review": 6,
+        "fused_auto": 0,
+        "abstain": 0
+      },
+      "naive_geometric_caught": 6,
+      "sentinel_effective_caught": 6,
+      "conflict_review_rescue_count": 6
+    },
+    {
+      "topo_id": "TOPO_06_PROLONGED_SLEEPER_BURST",
+      "family": "Temporal & Sleeper",
+      "description": "Accounts dormant for 75 days executing burst promo orders in <24 hours",
+      "n_accounts": 5,
+      "mean_p_struct_ac": 0.9997,
+      "mean_p_behav_ac": 0.8971,
+      "mean_p_fused_ac": 0.9961,
+      "mean_sym_kl": 0.3952,
+      "decision_breakdown": {
+        "ACT": 5,
+        "REVIEW": 0,
+        "WAIT_MONITOR": 0,
+        "ABSTAIN": 0
+      },
+      "routing_lane_breakdown": {
+        "conflict_review": 0,
+        "fused_auto": 5,
+        "abstain": 0
+      },
+      "naive_geometric_caught": 5,
+      "sentinel_effective_caught": 5,
+      "conflict_review_rescue_count": 0
+    },
+    {
+      "topo_id": "TOPO_07_MICRO_VELOCITY_STAGGER",
+      "family": "Temporal & Sleeper",
+      "description": "Micro-velocity staggering: orders spaced 4 days apart to evade burst windows",
+      "n_accounts": 6,
+      "mean_p_struct_ac": 0.59,
+      "mean_p_behav_ac": 0.0063,
+      "mean_p_fused_ac": 0.0934,
+      "mean_sym_kl": 2.0532,
+      "decision_breakdown": {
+        "ACT": 0,
+        "REVIEW": 6,
+        "WAIT_MONITOR": 0,
+        "ABSTAIN": 0
+      },
+      "routing_lane_breakdown": {
+        "conflict_review": 6,
+        "fused_auto": 0,
+        "abstain": 0
+      },
+      "naive_geometric_caught": 0,
+      "sentinel_effective_caught": 6,
+      "conflict_review_rescue_count": 6
+    },
+    {
+      "topo_id": "TOPO_08_BURST_THEN_ABANDON",
+      "family": "Temporal & Sleeper",
+      "description": "5 rapid promo orders on Day 60 followed by 20+ days total dormancy",
+      "n_accounts": 5,
+      "mean_p_struct_ac": 0.9997,
+      "mean_p_behav_ac": 0.988,
+      "mean_p_fused_ac": 0.9983,
+      "mean_sym_kl": 0.0235,
+      "decision_breakdown": {
+        "ACT": 5,
+        "REVIEW": 0,
+        "WAIT_MONITOR": 0,
+        "ABSTAIN": 0
+      },
+      "routing_lane_breakdown": {
+        "conflict_review": 0,
+        "fused_auto": 5,
+        "abstain": 0
+      },
+      "naive_geometric_caught": 5,
+      "sentinel_effective_caught": 5,
+      "conflict_review_rescue_count": 0
+    },
+    {
+      "topo_id": "TOPO_09_SLOW_BURN_REFERRAL",
+      "family": "Temporal & Sleeper",
+      "description": "Slow-burn referral chain spreading across 40 days at 1 order per 8 days",
+      "n_accounts": 6,
+      "mean_p_struct_ac": 0.1483,
+      "mean_p_behav_ac": 0.0164,
+      "mean_p_fused_ac": 0.0417,
+      "mean_sym_kl": 4.8976,
+      "decision_breakdown": {
+        "ACT": 0,
+        "REVIEW": 6,
+        "WAIT_MONITOR": 0,
+        "ABSTAIN": 0
+      },
+      "routing_lane_breakdown": {
+        "conflict_review": 6,
+        "fused_auto": 0,
+        "abstain": 0
+      },
+      "naive_geometric_caught": 0,
+      "sentinel_effective_caught": 6,
+      "conflict_review_rescue_count": 6
+    },
+    {
+      "topo_id": "TOPO_10_LATE_DEVICE_COLLISION",
+      "family": "Temporal & Sleeper",
+      "description": "Clean accounts that collide on a shared device ID only on 5th transaction",
+      "n_accounts": 5,
+      "mean_p_struct_ac": 1.0,
+      "mean_p_behav_ac": 0.0038,
+      "mean_p_fused_ac": 0.9442,
+      "mean_sym_kl": 8.6355,
+      "decision_breakdown": {
+        "ACT": 0,
+        "REVIEW": 5,
+        "WAIT_MONITOR": 0,
+        "ABSTAIN": 0
+      },
+      "routing_lane_breakdown": {
+        "conflict_review": 5,
+        "fused_auto": 0,
+        "abstain": 0
+      },
+      "naive_geometric_caught": 5,
+      "sentinel_effective_caught": 5,
+      "conflict_review_rescue_count": 5
+    },
+    {
+      "topo_id": "TOPO_11_PAYOUT_ROTATION",
+      "family": "Entity Manipulation",
+      "description": "8 fake accounts rotating across 1 shared bank account",
+      "n_accounts": 8,
+      "mean_p_struct_ac": 0.0048,
+      "mean_p_behav_ac": 0.6661,
+      "mean_p_fused_ac": 0.1016,
+      "mean_sym_kl": 2.2694,
+      "decision_breakdown": {
+        "ACT": 0,
+        "REVIEW": 8,
+        "WAIT_MONITOR": 0,
+        "ABSTAIN": 0
+      },
+      "routing_lane_breakdown": {
+        "conflict_review": 8,
+        "fused_auto": 0,
+        "abstain": 0
+      },
+      "naive_geometric_caught": 0,
+      "sentinel_effective_caught": 8,
+      "conflict_review_rescue_count": 8
+    },
+    {
+      "topo_id": "TOPO_12_DEVICE_FINGERPRINT_CHURN",
+      "family": "Entity Manipulation",
+      "description": "Attacker spoofing fresh device IDs per order on static IP & payout",
+      "n_accounts": 5,
+      "mean_p_struct_ac": 0.967,
+      "mean_p_behav_ac": 0.669,
+      "mean_p_fused_ac": 0.9386,
+      "mean_sym_kl": 1.0536,
+      "decision_breakdown": {
+        "ACT": 0,
+        "REVIEW": 5,
+        "WAIT_MONITOR": 0,
+        "ABSTAIN": 0
+      },
+      "routing_lane_breakdown": {
+        "conflict_review": 5,
+        "fused_auto": 0,
+        "abstain": 0
+      },
+      "naive_geometric_caught": 5,
+      "sentinel_effective_caught": 5,
+      "conflict_review_rescue_count": 5
+    },
+    {
+      "topo_id": "TOPO_13_SHARED_IP_SUBNET_HOPPING",
+      "family": "Entity Manipulation",
+      "description": "Adjacent IP subnet hopping (192.168.1.X) with shared device & payout",
+      "n_accounts": 6,
+      "mean_p_struct_ac": 0.9955,
+      "mean_p_behav_ac": 0.9925,
+      "mean_p_fused_ac": 0.9946,
+      "mean_sym_kl": 0.0035,
+      "decision_breakdown": {
+        "ACT": 6,
+        "REVIEW": 0,
+        "WAIT_MONITOR": 0,
+        "ABSTAIN": 0
+      },
+      "routing_lane_breakdown": {
+        "conflict_review": 0,
+        "fused_auto": 6,
+        "abstain": 0
+      },
+      "naive_geometric_caught": 6,
+      "sentinel_effective_caught": 6,
+      "conflict_review_rescue_count": 0
+    },
+    {
+      "topo_id": "TOPO_14_COLLUDING_MERCHANT_DISPUTE",
+      "family": "Entity Manipulation",
+      "description": "Colluding merchant self-generating orders and filing claim chargebacks",
+      "n_accounts": 5,
+      "mean_p_struct_ac": 0.0,
+      "mean_p_behav_ac": 0.9541,
+      "mean_p_fused_ac": 0.005,
+      "mean_sym_kl": 8.6533,
+      "decision_breakdown": {
+        "ACT": 0,
+        "REVIEW": 5,
+        "WAIT_MONITOR": 0,
+        "ABSTAIN": 0
+      },
+      "routing_lane_breakdown": {
+        "conflict_review": 5,
+        "fused_auto": 0,
+        "abstain": 0
+      },
+      "naive_geometric_caught": 0,
+      "sentinel_effective_caught": 5,
+      "conflict_review_rescue_count": 5
+    },
+    {
+      "topo_id": "TOPO_15_CIRCULAR_PAYOUT_RECYCLING",
+      "family": "Entity Manipulation",
+      "description": "Circular payout routing across 3 pairs of accounts",
+      "n_accounts": 6,
+      "mean_p_struct_ac": 0.0,
+      "mean_p_behav_ac": 0.9218,
+      "mean_p_fused_ac": 0.026,
+      "mean_sym_kl": 7.5928,
+      "decision_breakdown": {
+        "ACT": 0,
+        "REVIEW": 6,
+        "WAIT_MONITOR": 0,
+        "ABSTAIN": 0
+      },
+      "routing_lane_breakdown": {
+        "conflict_review": 6,
+        "fused_auto": 0,
+        "abstain": 0
+      },
+      "naive_geometric_caught": 0,
+      "sentinel_effective_caught": 6,
+      "conflict_review_rescue_count": 6
+    },
+    {
+      "topo_id": "TOPO_16_ISOLATED_PAIR_COLLUSION",
+      "family": "Extreme Sparsity",
+      "description": "Isolated 2-node pair sharing 1 device with zero background graph links",
+      "n_accounts": 2,
+      "mean_p_struct_ac": 0.0039,
+      "mean_p_behav_ac": 0.0035,
+      "mean_p_fused_ac": 0.0037,
+      "mean_sym_kl": 0.0154,
+      "decision_breakdown": {
+        "ACT": 0,
+        "REVIEW": 0,
+        "WAIT_MONITOR": 2,
+        "ABSTAIN": 0
+      },
+      "routing_lane_breakdown": {
+        "conflict_review": 0,
+        "fused_auto": 2,
+        "abstain": 0
+      },
+      "naive_geometric_caught": 0,
+      "sentinel_effective_caught": 0,
+      "conflict_review_rescue_count": 0
+    },
+    {
+      "topo_id": "TOPO_17_COLD_START_PROMO_FARM",
+      "family": "Extreme Sparsity",
+      "description": "5 brand-new accounts (2 orders each) sharing promo code with 0 prior edges",
+      "n_accounts": 5,
+      "mean_p_struct_ac": 0.0,
+      "mean_p_behav_ac": 0.0001,
+      "mean_p_fused_ac": 0.0,
+      "mean_sym_kl": 0.2536,
+      "decision_breakdown": {
+        "ACT": 0,
+        "REVIEW": 0,
+        "WAIT_MONITOR": 0,
+        "ABSTAIN": 5
+      },
+      "routing_lane_breakdown": {
+        "conflict_review": 0,
+        "fused_auto": 0,
+        "abstain": 5
+      },
+      "naive_geometric_caught": 0,
+      "sentinel_effective_caught": 0,
+      "conflict_review_rescue_count": 0
+    },
+    {
+      "topo_id": "TOPO_18_HIGH_VALUE_SINGLETON",
+      "family": "Extreme Sparsity",
+      "description": "Single n=1 whale account attempting promo exploit (tests ABSTAIN discipline)",
+      "n_accounts": 1,
+      "mean_p_struct_ac": 0.0,
+      "mean_p_behav_ac": 0.0,
+      "mean_p_fused_ac": 0.0,
+      "mean_sym_kl": 0.0588,
+      "decision_breakdown": {
+        "ACT": 0,
+        "REVIEW": 0,
+        "WAIT_MONITOR": 0,
+        "ABSTAIN": 1
+      },
+      "routing_lane_breakdown": {
+        "conflict_review": 0,
+        "fused_auto": 0,
+        "abstain": 1
+      },
+      "naive_geometric_caught": 0,
+      "sentinel_effective_caught": 0,
+      "conflict_review_rescue_count": 0
+    },
+    {
+      "topo_id": "TOPO_19_ASYMMETRIC_BIPARTITE",
+      "family": "Extreme Sparsity",
+      "description": "10 accounts connected to 2 shared devices with no direct peer edges",
+      "n_accounts": 10,
+      "mean_p_struct_ac": 0.3033,
+      "mean_p_behav_ac": 0.9686,
+      "mean_p_fused_ac": 0.7858,
+      "mean_sym_kl": 1.4181,
+      "decision_breakdown": {
+        "ACT": 0,
+        "REVIEW": 10,
+        "WAIT_MONITOR": 0,
+        "ABSTAIN": 0
+      },
+      "routing_lane_breakdown": {
+        "conflict_review": 10,
+        "fused_auto": 0,
+        "abstain": 0
+      },
+      "naive_geometric_caught": 10,
+      "sentinel_effective_caught": 10,
+      "conflict_review_rescue_count": 10
+    },
+    {
+      "topo_id": "TOPO_20_ZERO_STRUCTURAL_SIGNAL",
+      "family": "Extreme Sparsity",
+      "description": "Coordinated behavioral ring with 100% anonymized/isolated entities",
+      "n_accounts": 6,
+      "mean_p_struct_ac": 0.0,
+      "mean_p_behav_ac": 0.6176,
+      "mean_p_fused_ac": 0.002,
+      "mean_sym_kl": 6.7075,
+      "decision_breakdown": {
+        "ACT": 0,
+        "REVIEW": 6,
+        "WAIT_MONITOR": 0,
+        "ABSTAIN": 0
+      },
+      "routing_lane_breakdown": {
+        "conflict_review": 6,
+        "fused_auto": 0,
+        "abstain": 0
+      },
+      "naive_geometric_caught": 0,
+      "sentinel_effective_caught": 6,
+      "conflict_review_rescue_count": 6
+    },
+    {
+      "topo_id": "TOPO_21_BEHAVIORAL_MIMICRY",
+      "family": "Hybrid / Evasion Stress",
+      "description": "Ring matching benign transaction velocity perfectly with shared payout & device",
+      "n_accounts": 6,
+      "mean_p_struct_ac": 0.9955,
+      "mean_p_behav_ac": 0.0005,
+      "mean_p_fused_ac": 0.4262,
+      "mean_sym_kl": 8.3812,
+      "decision_breakdown": {
+        "ACT": 0,
+        "REVIEW": 6,
+        "WAIT_MONITOR": 0,
+        "ABSTAIN": 0
+      },
+      "routing_lane_breakdown": {
+        "conflict_review": 6,
+        "fused_auto": 0,
+        "abstain": 0
+      },
+      "naive_geometric_caught": 0,
+      "sentinel_effective_caught": 6,
+      "conflict_review_rescue_count": 6
+    },
+    {
+      "topo_id": "TOPO_22_ASYMMETRIC_DISAGREEMENT",
+      "family": "Hybrid / Evasion Stress",
+      "description": "High structural density (deg>15) with low behavioral velocity (P_behav < 0.10)",
+      "n_accounts": 8,
+      "mean_p_struct_ac": 0.6923,
+      "mean_p_behav_ac": 0.0004,
+      "mean_p_fused_ac": 0.1409,
+      "mean_sym_kl": 7.9973,
+      "decision_breakdown": {
+        "ACT": 0,
+        "REVIEW": 8,
+        "WAIT_MONITOR": 0,
+        "ABSTAIN": 0
+      },
+      "routing_lane_breakdown": {
+        "conflict_review": 8,
+        "fused_auto": 0,
+        "abstain": 0
+      },
+      "naive_geometric_caught": 0,
+      "sentinel_effective_caught": 8,
+      "conflict_review_rescue_count": 8
+    },
+    {
+      "topo_id": "TOPO_23_SPLIT_PAYOUT_TRIANGLE",
+      "family": "Hybrid / Evasion Stress",
+      "description": "Triangular payout splitting across 3 accounts",
+      "n_accounts": 3,
+      "mean_p_struct_ac": 0.0104,
+      "mean_p_behav_ac": 0.0002,
+      "mean_p_fused_ac": 0.0016,
+      "mean_sym_kl": 0.6979,
+      "decision_breakdown": {
+        "ACT": 0,
+        "REVIEW": 3,
+        "WAIT_MONITOR": 0,
+        "ABSTAIN": 0
+      },
+      "routing_lane_breakdown": {
+        "conflict_review": 3,
+        "fused_auto": 0,
+        "abstain": 0
+      },
+      "naive_geometric_caught": 0,
+      "sentinel_effective_caught": 3,
+      "conflict_review_rescue_count": 3
+    },
+    {
+      "topo_id": "TOPO_24_SYBIL_REFERRAL_TREE",
+      "family": "Hybrid / Evasion Stress",
+      "description": "4-level deep sybil tree with geometric referral cascade",
+      "n_accounts": 15,
+      "mean_p_struct_ac": 0.9334,
+      "mean_p_behav_ac": 0.0032,
+      "mean_p_fused_ac": 0.8682,
+      "mean_sym_kl": 8.2751,
+      "decision_breakdown": {
+        "ACT": 0,
+        "REVIEW": 0,
+        "WAIT_MONITOR": 0,
+        "ABSTAIN": 15
+      },
+      "routing_lane_breakdown": {
+        "conflict_review": 0,
+        "fused_auto": 0,
+        "abstain": 15
+      },
+      "naive_geometric_caught": 14,
+      "sentinel_effective_caught": 0,
+      "conflict_review_rescue_count": 0
+    },
+    {
+      "topo_id": "TOPO_25_ADVERSARIAL_BORDERLINE",
+      "family": "Hybrid / Evasion Stress",
+      "description": "Ring calibrated exactly to the boundary thresholds (sym_KL ~ 0.49, P_fused ~ 0.48)",
+      "n_accounts": 5,
+      "mean_p_struct_ac": 0.9953,
+      "mean_p_behav_ac": 0.0068,
+      "mean_p_fused_ac": 0.6537,
+      "mean_sym_kl": 6.0394,
+      "decision_breakdown": {
+        "ACT": 0,
+        "REVIEW": 5,
+        "WAIT_MONITOR": 0,
+        "ABSTAIN": 0
+      },
+      "routing_lane_breakdown": {
+        "conflict_review": 5,
+        "fused_auto": 0,
+        "abstain": 0
+      },
+      "naive_geometric_caught": 5,
+      "sentinel_effective_caught": 5,
+      "conflict_review_rescue_count": 5
+    }
+  ]
+}

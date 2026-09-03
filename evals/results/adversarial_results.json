@@ -1,0 +1,158 @@
+{
+  "title": "AbuseRing Sentinel \u2014 Adversarial Evasion & Attacker Stress Test",
+  "description": "Evaluation of existing pre-trained models and DecisionEngine against 4 adversarial evasion strategies without retraining.",
+  "n_test_accounts": 3467,
+  "n_true_ac": 198,
+  "scenarios": {
+    "baseline": {
+      "name": "Baseline (Unperturbed Canonical Test)",
+      "description": "Canonical test split (Days 73-90) with naturally formed rings without intentional evasion.",
+      "standalone_recall_ac": {
+        "structural_lgbm": 0.2374,
+        "behavioral_lgbm": 0.9545,
+        "fused_calibrated": 0.3081
+      },
+      "decision_engine": {
+        "direct_auto_act_recall": 0.1919,
+        "direct_auto_act_precision": 1.0,
+        "auto_act_false_positives": 0,
+        "auto_act_false_positive_rate": 0.0,
+        "effective_recall": 0.8182,
+        "counts": {
+          "ACT": 38,
+          "REVIEW": 779,
+          "WAIT_MONITOR": 2614,
+          "ABSTAIN": 36
+        },
+        "ac_breakdown": {
+          "AC_in_ACT": 38,
+          "AC_in_REVIEW": 124,
+          "AC_in_WAIT_escaped": 0,
+          "AC_in_ABSTAIN_gated": 36
+        },
+        "mean_sym_kl_on_ac": 7.5016,
+        "median_sym_kl_on_ac": 9.2658
+      }
+    },
+    "strategy_1_anti_burst": {
+      "name": "Strategy 1: Anti-Burst Order Staggering (Temporal Evasion)",
+      "description": "Fraudsters intentionally inject delays between orders, flattening velocity bursts to 1 order/day.",
+      "standalone_recall_ac": {
+        "structural_lgbm": 0.2374,
+        "behavioral_lgbm": 0.8737,
+        "fused_calibrated": 0.303
+      },
+      "decision_engine": {
+        "direct_auto_act_recall": 0.096,
+        "direct_auto_act_precision": 1.0,
+        "auto_act_false_positives": 0,
+        "auto_act_false_positive_rate": 0.0,
+        "effective_recall": 0.8182,
+        "counts": {
+          "ACT": 19,
+          "REVIEW": 798,
+          "WAIT_MONITOR": 2614,
+          "ABSTAIN": 36
+        },
+        "ac_breakdown": {
+          "AC_in_ACT": 19,
+          "AC_in_REVIEW": 143,
+          "AC_in_WAIT_escaped": 0,
+          "AC_in_ABSTAIN_gated": 36
+        },
+        "mean_sym_kl_on_ac": 7.7921,
+        "median_sym_kl_on_ac": 9.0423
+      }
+    },
+    "strategy_2_device_ip_hopping": {
+      "name": "Strategy 2: Device & IP Hopping (Footprint Dilution)",
+      "description": "Fraudsters randomize devices and route via proxy IPs, leaving only payout/instrument co-sharing.",
+      "standalone_recall_ac": {
+        "structural_lgbm": 0.1313,
+        "behavioral_lgbm": 0.9545,
+        "fused_calibrated": 0.2626
+      },
+      "decision_engine": {
+        "direct_auto_act_recall": 0.0505,
+        "direct_auto_act_precision": 1.0,
+        "auto_act_false_positives": 0,
+        "auto_act_false_positive_rate": 0.0,
+        "effective_recall": 0.8081,
+        "counts": {
+          "ACT": 10,
+          "REVIEW": 805,
+          "WAIT_MONITOR": 2616,
+          "ABSTAIN": 36
+        },
+        "ac_breakdown": {
+          "AC_in_ACT": 10,
+          "AC_in_REVIEW": 150,
+          "AC_in_WAIT_escaped": 2,
+          "AC_in_ABSTAIN_gated": 36
+        },
+        "mean_sym_kl_on_ac": 8.2712,
+        "median_sym_kl_on_ac": 9.5429
+      }
+    },
+    "strategy_3_benign_camouflage": {
+      "name": "Strategy 3: Benign Camouflage (Promo & Return Masking)",
+      "description": "Fraudsters place standard orders without coupons or returns to blend into normal consumer cadences.",
+      "standalone_recall_ac": {
+        "structural_lgbm": 0.2374,
+        "behavioral_lgbm": 0.9242,
+        "fused_calibrated": 0.3081
+      },
+      "decision_engine": {
+        "direct_auto_act_recall": 0.1414,
+        "direct_auto_act_precision": 1.0,
+        "auto_act_false_positives": 0,
+        "auto_act_false_positive_rate": 0.0,
+        "effective_recall": 0.8182,
+        "counts": {
+          "ACT": 28,
+          "REVIEW": 789,
+          "WAIT_MONITOR": 2614,
+          "ABSTAIN": 36
+        },
+        "ac_breakdown": {
+          "AC_in_ACT": 28,
+          "AC_in_REVIEW": 134,
+          "AC_in_WAIT_escaped": 0,
+          "AC_in_ABSTAIN_gated": 36
+        },
+        "mean_sym_kl_on_ac": 7.7538,
+        "median_sym_kl_on_ac": 9.4328
+      }
+    },
+    "strategy_4_combined_adaptive": {
+      "name": "Strategy 4: Full Multi-Vector Adaptive Evasion (Combined)",
+      "description": "Sophisticated attacker simultaneously staggering timing, rotating device/IPs, and diluting promos.",
+      "standalone_recall_ac": {
+        "structural_lgbm": 0.1313,
+        "behavioral_lgbm": 0.8889,
+        "fused_calibrated": 0.1616
+      },
+      "decision_engine": {
+        "direct_auto_act_recall": 0.0606,
+        "direct_auto_act_precision": 1.0,
+        "auto_act_false_positives": 0,
+        "auto_act_false_positive_rate": 0.0,
+        "effective_recall": 0.7879,
+        "counts": {
+          "ACT": 12,
+          "REVIEW": 799,
+          "WAIT_MONITOR": 2620,
+          "ABSTAIN": 36
+        },
+        "ac_breakdown": {
+          "AC_in_ACT": 12,
+          "AC_in_REVIEW": 144,
+          "AC_in_WAIT_escaped": 6,
+          "AC_in_ABSTAIN_gated": 36
+        },
+        "mean_sym_kl_on_ac": 7.7944,
+        "median_sym_kl_on_ac": 9.5642
+      }
+    }
+  }
+}

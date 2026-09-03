@@ -1,0 +1,97 @@
+{
+  "gnn_test_metrics": {
+    "model": "gnn_graphsage_rung6",
+    "split": "test",
+    "precision_abusive": 1.0,
+    "recall_abusive": 0.1667,
+    "f1_abusive": 0.2857,
+    "precision_benign_coord": 0.8144,
+    "recall_benign_coord": 0.999,
+    "f1_benign_coord": 0.8973,
+    "precision_benign_indep": 0.9473,
+    "recall_benign_indep": 0.9209,
+    "f1_benign_indep": 0.9339,
+    "roc_auc_macro": 0.9074,
+    "training_time_sec": 9.684,
+    "inference_ms_per_account": 0.076,
+    "total_test_accounts": 3467
+  },
+  "structural_lgbm_test_metrics": {
+    "model": "structural_lgbm_rung4",
+    "split": "test",
+    "precision_abusive": 0.7833,
+    "recall_abusive": 0.2374,
+    "f1_abusive": 0.3643,
+    "roc_auc_macro": 0.8776,
+    "inference_ms_per_account": 0.014
+  },
+  "robustness_subsets": {
+    "referral_farming": {
+      "n_accounts": 143,
+      "gnn_recall": 0.0,
+      "struct_lgbm_recall": 0.0
+    },
+    "hard_bc": {
+      "n_accounts": 101,
+      "gnn_false_positive_rate": 0.0,
+      "struct_lgbm_false_positive_rate": 0.1089
+    },
+    "sleeper_accounts": {
+      "n_accounts": 19,
+      "gnn_recall": 0.3158,
+      "struct_lgbm_recall": 1.0
+    }
+  },
+  "training_convergence": [
+    {
+      "epoch": 1,
+      "train_loss": 1.11091,
+      "val_loss": 0.99008
+    },
+    {
+      "epoch": 16,
+      "train_loss": 0.25879,
+      "val_loss": 0.28864
+    },
+    {
+      "epoch": 31,
+      "train_loss": 0.15207,
+      "val_loss": 0.1956
+    },
+    {
+      "epoch": 46,
+      "train_loss": 0.11331,
+      "val_loss": 0.21377
+    },
+    {
+      "epoch": 61,
+      "train_loss": 0.08343,
+      "val_loss": 0.23724
+    },
+    {
+      "epoch": 76,
+      "train_loss": 0.05752,
+      "val_loss": 0.24316
+    },
+    {
+      "epoch": 91,
+      "train_loss": 0.05559,
+      "val_loss": 0.26298
+    },
+    {
+      "epoch": 106,
+      "train_loss": 0.04229,
+      "val_loss": 0.26466
+    },
+    {
+      "epoch": 121,
+      "train_loss": 0.03559,
+      "val_loss": 0.25646
+    },
+    {
+      "epoch": 136,
+      "train_loss": 0.0332,
+      "val_loss": 0.28923
+    }
+  ]
+}

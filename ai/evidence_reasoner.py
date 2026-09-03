@@ -186,7 +186,10 @@ def call_llm(payload, api_key=None):
     try:
         import google.generativeai as genai
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        try:
+            model = genai.GenerativeModel("gemini-3.6-flash")
+        except Exception:
+            model = genai.GenerativeModel("gemini-flash-latest")
         user_message = "Analyze the following account evidence and respond with JSON only:\n\n" + json.dumps(payload, indent=2)
         response = model.generate_content([{"role": "user", "parts": [SYSTEM_PROMPT + "\n\n" + user_message]}],
                                            generation_config={"response_mime_type": "application/json"})
@@ -202,6 +205,9 @@ def validate_llm_output(llm_output, payload):
     if missing:
         violations.append(f"Missing required output keys: {missing}")
     
+    if llm_output.get("qualitative_assessment") == "API_ERROR" or "LLM call failed" in llm_output.get("conflict_explanation", ""):
+        violations.append("LLM call failed with API_ERROR fallback.")
+
     output_text = json.dumps(llm_output)
     
     # Account ID hallucination check
@@ -243,14 +249,53 @@ def validate_llm_output(llm_output, payload):
     if mentioned_instrs:
         violations.append(f"Hallucinated instrument IDs not in payload: {mentioned_instrs}")
 
-    # Risk score check
+    # Risk score JSON key check
     if re.search(r'"risk_score"\s*:', output_text, re.IGNORECASE):
         violations.append("LLM wrote a 'risk_score' key - forbidden.")
         
-    # Forbidden operational actions
-    for action in ["block", "terminate", "suspend", "ban", "auto-"]:
+    # Free-text numeric score / probability smuggling check
+    text_score_pattern = re.compile(
+        r'\b(risk[_\s]score|fraud[_\s]probability|abuse[_\s]probability|risk[_\s]level)\s*(?:is|of|[:=])\s*\d+\.?\d*',
+        re.IGNORECASE
+    )
+    if text_score_pattern.search(output_text):
+        violations.append("LLM smuggled free-text numeric risk/probability score into narrative.")
+
+    # System override / prompt injection delimiter phrase check
+    injection_phrases = [
+        "system override",
+        "ignore previous instructions",
+        "ignore all previous instructions",
+        "new instructions:",
+        "</payload>",
+        "disregard all rules",
+        "fraudgpt"
+    ]
+    for phrase in injection_phrases:
+        if phrase.lower() in output_text.lower():
+            violations.append(f"Prompt injection phrase detected in output: '{phrase}'")
+
+    # Forbidden operational actions & synonyms (enforcement directives)
+    forbidden_actions = [
+        "block", "terminate", "suspend", "ban", "auto-",
+        "freeze", "blacklist", "whitelist", "quarantine",
+        "disable account", "revoke", "deactivate", "allow all"
+    ]
+    for action in forbidden_actions:
         if action.lower() in output_text.lower():
-            violations.append(f"LLM recommended forbidden action: '{action}'")
+            violations.append(f"LLM recommended forbidden operational action: '{action}'")
+
+    # Categorical verdict assertion check (violates advisory-only mandate)
+    categorical_patterns = [
+        r'\bis an abuser\b',
+        r'\bconfirmed fraud\b',
+        r'\bguilty of\b',
+        r'\bdefinitely fraudulent\b',
+        r'\bis a scammer\b'
+    ]
+    for cat_pat in categorical_patterns:
+        if re.search(cat_pat, output_text, re.IGNORECASE):
+            violations.append("LLM emitted categorical assertion/conclusion violating advisory mandate.")
             
     return len(violations) == 0, violations
 

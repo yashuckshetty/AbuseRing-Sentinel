@@ -141,9 +141,39 @@
       font-weight: 400;
     }
 
+    /* ── TYPE SCALE (4 tiers) ── */
+    /* Tier 0 – Hero number: 36px bold mono, per-card ONE number */
+    .hero-num {
+      font-size: 36px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      letter-spacing: -0.02em;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    /* Tier 1 – Section titles: 18px (unchanged) */
+    /* Tier 2 – Supporting numbers in tables: 12px (via td, reduced from 13px) */
+    /* Tier 3 – Captions / caveats: 11px #64748b (var(--text-dim)) */
+    .caption {
+      font-size: 11px;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      line-height: 1.5;
+    }
+
+    /* ── SECTION BREATHING ROOM (2x margin + gradient separator) ── */
     /* Section Styling */
     section {
-      margin-bottom: 56px;
+      margin-bottom: 112px;
+      position: relative;
+    }
+    section + section::before {
+      content: '';
+      display: block;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(0,229,255,0.12) 30%, rgba(139,92,246,0.10) 70%, transparent 100%);
+      margin-bottom: 112px;
+      margin-top: -112px;
     }
 
     .section-header {
@@ -187,8 +217,14 @@
       gap: 20px;
     }
 
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
     @media (max-width: 860px) {
-      .grid-2 {
+      .grid-2, .grid-3 {
         grid-template-columns: 1fr;
       }
     }
@@ -260,11 +296,19 @@
     }
 
     .gauge-val {
-      font-size: 28px;
-      font-weight: 800;
+      font-size: 22px;
+      font-weight: 700;
       font-family: var(--font-mono);
-      color: #fff;
+      color: #cbd5e1;
+      letter-spacing: -0.01em;
       margin-bottom: 8px;
+    }
+
+    .gauge-val.hero-num {
+      font-size: 36px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.02em;
     }
 
     .progress-track {
@@ -314,9 +358,11 @@
     }
 
     .divergence-num {
-      font-size: 22px;
+      font-size: 36px;
       font-weight: 800;
       font-family: var(--font-mono);
+      letter-spacing: -0.02em;
+      /* Cyan reserved ONLY for core routing architecture concept */
       color: var(--cyan);
     }
 
@@ -369,7 +415,7 @@
     .timeline-wrap::before {
       content: '';
       position: absolute;
-      top: 24px;
+      top: 28px;
       left: 30px;
       right: 30px;
       height: 3px;
@@ -388,25 +434,26 @@
     }
 
     .node-circle {
-      width: 48px;
-      height: 48px;
+      width: 56px;
+      height: 56px;
       border-radius: 50%;
       background: var(--bg-card-alt);
       border: 2px solid var(--border-color);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 12px;
-      font-weight: 700;
+      font-size: 13px;
+      font-weight: 800;
       font-family: var(--font-mono);
+      letter-spacing: 0.04em;
       margin-bottom: 12px;
       transition: all 0.2s;
     }
 
-    .node-circle.node-ACT { border-color: var(--red); color: var(--red); background: var(--red-bg); }
-    .node-circle.node-REVIEW { border-color: var(--amber); color: var(--amber); background: var(--amber-bg); }
-    .node-circle.node-WAIT_MONITOR { border-color: var(--blue); color: var(--blue); }
-    .node-circle.node-ABSTAIN { border-color: var(--text-dim); color: var(--text-muted); }
+    .node-circle.node-ACT { border-color: var(--red); color: #fff; background: var(--red-bg); box-shadow: 0 0 16px rgba(239, 68, 68, 0.4); }
+    .node-circle.node-REVIEW { border-color: var(--amber); color: #fff; background: var(--amber-bg); box-shadow: 0 0 16px rgba(245, 158, 11, 0.4); }
+    .node-circle.node-WAIT_MONITOR { border-color: var(--blue); color: #93c5fd; background: rgba(59, 130, 246, 0.18); box-shadow: 0 0 12px rgba(59, 130, 246, 0.25); }
+    .node-circle.node-ABSTAIN { border-color: var(--text-dim); color: var(--text-muted); background: rgba(100, 116, 139, 0.15); }
 
     .node-label {
       font-size: 12px;
@@ -435,35 +482,52 @@
       line-height: 1.5;
     }
 
-    /* Tables */
+    /* ── TABLES (no outer border card — let stripe provide structure) ── */
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 13px;
-      margin: 12px 0;
+      font-size: 12px;  /* Tier 2: slightly reduced from 13px */
+      margin: 0;
     }
 
     th {
       text-align: left;
       padding: 10px 14px;
-      background: var(--bg-card-alt);
-      color: var(--text-muted);
+      background: rgba(15, 23, 42, 0.7);
+      color: var(--text-dim);  /* dimmer than before */
       font-weight: 600;
       font-family: var(--font-mono);
-      font-size: 11px;
+      font-size: 10px;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.07em;
       border-bottom: 1px solid var(--border-color);
+      border-top: 1px solid var(--border-color);
     }
 
     td {
-      padding: 12px 14px;
+      padding: 11px 14px;
       border-bottom: 1px solid var(--border-subtle);
-      color: #cbd5e1;
+      color: #94a3b8;  /* slightly dimmer for Tier 2 secondary numbers */
+    }
+
+    td.highlight-cell, td.mono.highlight-cell {
+      color: #fff;
+      font-weight: 700;
+    }
+
+    tr:nth-child(even) td {
+      background: rgba(255, 255, 255, 0.018);
     }
 
     tr:hover td {
-      background: rgba(255, 255, 255, 0.02);
+      background: rgba(0, 229, 255, 0.025);
+    }
+
+    /* Table wrapper: naked (no border card), just consistent outer radius */
+    .table-naked {
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
     }
 
     .mono {
@@ -574,6 +638,115 @@
       font-family: var(--font-mono);
       font-size: 13px;
     }
+
+    /* ── SEMANTIC COLOR GRAMMAR (enforced globally) ──
+       cyan    → core routing architecture (KL divergence, routing lane)
+       emerald → good / safe / auto-ACT correct / 0 FP
+       amber   → caution / human review required / warning
+       red     → cost / risk / action / enforcement
+       blue    → neutral informational / wait monitor
+       purple  → temporal / trajectory / compounding dynamics
+    */
+
+    /* ── SUBGRAPH VISUALIZER — elevated prominence ── */
+    .graph-panel {
+      margin-top: 24px;
+      background: var(--bg-card);
+      border: 1px solid rgba(0,229,255,0.18);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 0 32px rgba(0, 229, 255, 0.06), 0 12px 40px rgba(0,0,0,0.35);
+    }
+
+    .graph-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 12px 0 16px 0;
+      align-items: center;
+    }
+
+    .legend-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .checklist-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .checklist-card {
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border-subtle);
+      border-left: 4px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px 16px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    /* Semantic: amber=review/caution, red=risk/critical, blue=medium, emerald=safe/low */
+    .checklist-card.sev-CRITICAL {
+      border-left-color: var(--red);
+      background: rgba(239, 68, 68, 0.05);
+      border-color: rgba(239, 68, 68, 0.25);
+      box-shadow: 0 0 16px rgba(239, 68, 68, 0.08);
+    }
+    .checklist-card.sev-HIGH { border-left-color: var(--amber); }
+    .checklist-card.sev-MEDIUM { border-left-color: var(--blue); }
+    .checklist-card.sev-LOW { border-left-color: var(--emerald); }
+
+    .sev-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .sev-badge.sev-CRITICAL {
+      background: var(--red-bg);
+      color: #ff6b6b;
+      border: 1px solid rgba(239, 68, 68, 0.6);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.35);
+      letter-spacing: 0.06em;
+    }
+    .sev-badge.sev-HIGH { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+    .sev-badge.sev-MEDIUM { background: rgba(59, 130, 246, 0.1); color: var(--blue); border: 1px solid rgba(59, 130, 246, 0.3); }
+    .sev-badge.sev-LOW { background: var(--emerald-bg); color: var(--emerald); border: 1px solid rgba(16, 185, 129, 0.3); }
+
+    /* ── TRAJECTORY SECTION — elevated prominence ── */
+    .trajectory-card-elevated {
+      background: var(--bg-card);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 14px;
+      padding: 24px;
+      box-shadow: 0 0 28px rgba(139, 92, 246, 0.07), 0 12px 36px rgba(0,0,0,0.3);
+    }
   </style>
 </head>
 <body>
@@ -648,12 +821,12 @@
             </div>
           </div>
 
-          <div class="gauge-box">
-            <div class="gauge-title">
+          <div class="gauge-box" style="border: 1px solid rgba(16, 185, 129, 0.35); background: rgba(16, 185, 129, 0.04);">
+            <div class="gauge-title" style="color: var(--emerald);">
               <span>Geometric Mean Fused</span>
               <span class="mono">P(fused)[AC]</span>
             </div>
-            <div class="gauge-val" id="val-p-fused">0.0000</div>
+            <div class="gauge-val hero-num" style="color: #34d399;" id="val-p-fused">0.0000</div>
             <div class="progress-track">
               <div class="progress-fill fill-fused" id="bar-p-fused" style="width: 0%;"></div>
             </div>
@@ -683,6 +856,46 @@
             <!-- Populated via JS -->
           </div>
         </div>
+
+        <!-- Interactive Subgraph Visualizer & Investigation Workspace -->
+        <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+            <div>
+              <div style="font-size: 14px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px;">
+                <span>Connected Subgraph & Investigation Workspace</span>
+                <span class="mono tag-pill" id="graph-neighbor-pill" style="background: var(--cyan-glow); color: var(--cyan); border: 1px solid var(--cyan);">0 Connected Neighbors</span>
+              </div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;" id="graph-truncation-note">
+                1-hop multi-signal topology extracted as of test cutoff (reusing temporal graph builder)
+              </div>
+            </div>
+            <!-- Edge Type Legend -->
+            <div class="graph-legend" id="edge-legend">
+              <span class="legend-tag"><span class="legend-dot" style="background: #ef4444;"></span>Shared Payout</span>
+              <span class="legend-tag"><span class="legend-dot" style="background: #3b82f6;"></span>Shared Device</span>
+              <span class="legend-tag"><span class="legend-dot" style="background: #10b981;"></span>Shared IP</span>
+              <span class="legend-tag"><span class="legend-dot" style="background: #f59e0b;"></span>Shared Instrument</span>
+              <span class="legend-tag"><span class="legend-dot" style="background: #a855f7;"></span>Referral Link</span>
+            </div>
+          </div>
+
+          <!-- Pure SVG Subgraph Viewport (No CDN / External Dependency) -->
+          <div style="position: relative; width: 100%; border-radius: 8px; overflow: hidden; background: #080e1d; border: 1px solid var(--border-color);">
+            <svg id="subgraph-svg" viewBox="0 0 760 340" style="width: 100%; height: 340px; display: block;">
+              <!-- Dynamically populated via JS -->
+            </svg>
+          </div>
+
+          <!-- Investigation Checklist -->
+          <div style="margin-top: 20px;">
+            <div style="font-size: 11px; font-family: var(--font-mono); color: var(--text-dim); text-transform: uppercase; margin-bottom: 8px;">
+              Analyst Investigation Checklist (Evidence-Grounded Action Steps)
+            </div>
+            <div class="checklist-container" id="investigation-checklist">
+              <!-- Dynamically populated via JS -->
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -695,13 +908,13 @@
         <div class="section-tag">Endpoint: /api/trajectory/{ring_id}</div>
       </div>
 
-      <div class="card">
+      <div class="trajectory-card-elevated">
         <div style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
           <div>
             <div style="font-size: 13px; color: var(--text-muted);">
               Select late-forming ring to inspect exact longitudinal checkpoint data:
             </div>
-            <div style="font-size: 11px; color: var(--text-dim); margin-top: 4px; font-family: var(--font-mono);">
+            <div class="caption" style="margin-top: 4px;">
               Evaluated across all 19 late-forming rings (formation start &ge; Day 55, spanning the validation/test windows) &mdash; this is the full available population meeting that criterion in this dataset, not a subsample selection.
             </div>
           </div>
@@ -712,7 +925,7 @@
           </div>
         </div>
 
-        <div id="trajectory-notes" style="font-size: 13px; color: #cbd5e1; background: var(--bg-card-alt); padding: 12px 16px; border-radius: 8px; border-left: 3px solid var(--purple); margin-bottom: 24px;">
+        <div id="trajectory-notes" style="font-size: 13px; color: #cbd5e1; background: var(--bg-card-alt); padding: 12px 16px; border-radius: 8px; border-left: 3px solid rgba(139,92,246,0.7); margin-bottom: 24px;">
           Loading trajectory data...
         </div>
 
@@ -737,11 +950,14 @@
           <div style="font-size: 14px; font-weight: 700; color: var(--cyan); margin-bottom: 12px; font-family: var(--font-mono);">
             With Disagreement-Aware Routing (KL=0.5)
           </div>
+          <div style="margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle);">
+            <div class="hero-num" style="color: var(--emerald);" id="abl-kl-eff-rec">-</div>
+            <div class="caption">Effective Recall (ACT + REVIEW) &mdash; 0 Auto-ACT False Positives</div>
+          </div>
           <table>
             <tbody>
               <tr><td>Direct Auto-ACT Precision</td><td class="mono highlight-cell" id="abl-kl-prec">-</td></tr>
               <tr><td>Direct Auto-ACT Recall</td><td class="mono" id="abl-kl-rec">-</td></tr>
-              <tr><td>Effective Recall (ACT + REVIEW)</td><td class="mono highlight-cell" style="color:var(--emerald);" id="abl-kl-eff-rec">-</td></tr>
               <tr><td>False Positives in Auto-ACT</td><td class="mono" style="color:var(--emerald);" id="abl-kl-fp">-</td></tr>
               <tr><td>Missed AC Accounts (WAIT FN)</td><td class="mono" style="color:var(--emerald);" id="abl-kl-missed">-</td></tr>
               <tr><td>Simulated Total Cost (Best Case)</td><td class="mono highlight-cell" id="abl-kl-cost">-</td></tr>
@@ -753,11 +969,14 @@
           <div style="font-size: 14px; font-weight: 700; color: var(--red); margin-bottom: 12px; font-family: var(--font-mono);">
             Threshold-Only Ablation (P(fused) >= 0.70)
           </div>
+          <div style="margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle);">
+            <div class="hero-num" style="color: var(--red);" id="abl-th-eff-rec">-</div>
+            <div class="caption">Effective Recall (No Review Lane) &mdash; 107 FN in Referral Ring</div>
+          </div>
           <table>
             <tbody>
               <tr><td>Direct Auto-ACT Precision</td><td class="mono highlight-cell" id="abl-th-prec">-</td></tr>
               <tr><td>Direct Auto-ACT Recall</td><td class="mono" id="abl-th-rec">-</td></tr>
-              <tr><td>Effective Recall (No Review Lane)</td><td class="mono highlight-cell" style="color:var(--red);" id="abl-th-eff-rec">-</td></tr>
               <tr><td>False Positives in Auto-ACT</td><td class="mono" id="abl-th-fp">-</td></tr>
               <tr><td>Missed AC Accounts (WAIT FN)</td><td class="mono" style="color:var(--red); font-weight:700;" id="abl-th-missed">-</td></tr>
               <tr><td>Simulated Total Cost (Best Case)</td><td class="mono highlight-cell" style="color:var(--red);" id="abl-th-cost">-</td></tr>
@@ -889,7 +1108,208 @@
       </div>
     </section>
 
-    <!-- SECTION G: KNOWN LIMITATIONS -->
+    <!-- SECTION G: ADVANCED BENCHMARKS & STRESS TEST MODULES -->
+    <section>
+      <div class="section-header">
+        <div class="section-title">
+          <span>Advanced Benchmarks & Stress Test Modules</span>
+        </div>
+        <div class="section-tag">API & Evaluation Artifact Surface Parity</div>
+      </div>
+
+      <div class="grid-3">
+        <!-- Card 1: GNN Comparison -->
+        <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="font-size: 10px; font-weight: 700; color: var(--blue); text-transform: uppercase; font-family: var(--font-mono); margin-bottom: 6px; letter-spacing: 0.05em;">
+              Model Ladder Rung 6
+            </div>
+            <div style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px;">
+              GNN Link Predictor vs. Tabular LightGBM
+            </div>
+            <div class="caption" style="margin-bottom: 16px;">
+              Deep graph neural network benchmark against structural gradient boosting on temporal transaction graphs.
+            </div>
+            <div class="hero-num" style="color: var(--blue);">23.7% <span style="font-size:16px; color: var(--text-dim); font-weight:400">vs GNN 16.7%</span></div>
+            <div class="caption" style="margin-bottom: 12px;">LightGBM Recall (AC) — simpler tabular model wins</div>
+            <div class="caption" style="color: #94a3b8;">Simpler engineered graph features outperform deep GNN link prediction on sparse, partial-ring graphs. F1: 0.364 vs 0.283.</div>
+          </div>
+          <a href="/api/gnn-comparison" target="_blank" class="pill-btn" style="text-decoration: none; width: fit-content; margin-top: 18px;">
+            <span>View Full API Data &rarr;</span>
+          </a>
+        </div>
+
+        <!-- Card 2: Scenario B Generalization -->
+        <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="font-size: 10px; font-weight: 700; color: var(--emerald); text-transform: uppercase; font-family: var(--font-mono); margin-bottom: 6px; letter-spacing: 0.05em;">
+              Domain Transfer Stress Test
+            </div>
+            <div style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px;">
+              Scenario B: Subscription Platform Trial Abuse
+            </div>
+            <div class="caption" style="margin-bottom: 16px;">
+              Zero-retraining transfer of trained DecisionEngine to N=1,800 recurring-billing accounts under domain shift.
+            </div>
+            <div class="hero-num" style="color: var(--emerald);">0.00%</div>
+            <div class="caption" style="margin-bottom: 12px;">Auto-ACT False Positive Rate (924 Review, 556 Abstain)</div>
+            <div class="caption" style="color: #94a3b8;">Conservative routing invariants prevent wrongful auto-enforcement on unseen trial fraud topologies.</div>
+          </div>
+          <a href="/api/scenario-b" target="_blank" class="pill-btn" style="text-decoration: none; width: fit-content; margin-top: 18px;">
+            <span>View Full API Data &rarr;</span>
+          </a>
+        </div>
+
+        <!-- Card 3: Adversarial Evasion -->
+        <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="font-size: 10px; font-weight: 700; color: var(--amber); text-transform: uppercase; font-family: var(--font-mono); margin-bottom: 6px; letter-spacing: 0.05em;">
+              Adaptive Attacker Stress Test
+            </div>
+            <div style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px;">
+              Adversarial Adaptation & Evasion Battery
+            </div>
+            <div class="caption" style="margin-bottom: 16px;">
+              Active fraudster evasion across anti-burst staggering, IP/device hopping, and benign camouflage.
+            </div>
+            <div class="hero-num" style="color: var(--amber);">78.8–81.8%</div>
+            <div class="caption" style="margin-bottom: 12px;">Effective Recall preserved under 4 evasion regimes</div>
+            <div class="caption" style="color: #94a3b8;">0 Auto-ACT false positives. Evasion routes 789–805 accounts into human REVIEW lane via sym_KL signal.</div>
+          </div>
+          <a href="/api/adversarial-evasion" target="_blank" class="pill-btn" style="text-decoration: none; width: fit-content; margin-top: 18px;">
+            <span>View Full API Data &rarr;</span>
+          </a>
+        </div>
+
+        <!-- Card 4: Dynamic Cost Model -->
+        <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="font-size: 10px; font-weight: 700; color: var(--purple); text-transform: uppercase; font-family: var(--font-mono); margin-bottom: 6px; letter-spacing: 0.05em;">
+              Exposure & Loss Dynamics
+            </div>
+            <div style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px;">
+              Symmetric Dynamic Compounding Cost Model
+            </div>
+            <div class="caption" style="margin-bottom: 16px;">
+              L(t) = C<sub>0</sub> + &alpha;&middot;t<sup>1.2</sup> applied symmetrically across missed and deferred accounts.
+            </div>
+            <div class="hero-num" style="color: var(--purple);">72.5 d</div>
+            <div class="caption" style="margin-bottom: 12px;">Shortest break-even lag (&alpha; = Rs 500/day, worst-case)</div>
+            <div class="caption" style="color: #94a3b8;">Routing cost-superior at 72.5–128.8 days lag for active rings (&alpha; &ge; Rs 100/day). See dynamic_cost_results.json.</div>
+          </div>
+          <a href="/api/dynamic-cost" target="_blank" class="pill-btn" style="text-decoration: none; width: fit-content; margin-top: 18px;">
+            <span>View Full API Data &rarr;</span>
+          </a>
+        </div>
+
+        <!-- Card 5: Capacity Triage -->
+        <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="font-size: 10px; font-weight: 700; color: var(--emerald); text-transform: uppercase; font-family: var(--font-mono); margin-bottom: 6px; letter-spacing: 0.05em;">
+              Operations & Queue Optimization
+            </div>
+            <div style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px;">
+              Capacity-Constrained Review Queue Triage
+            </div>
+            <div class="caption" style="margin-bottom: 16px;">
+              Priority ranking policies under human review headcount bottlenecks (K &isin; [25, 779] reviews/day).
+            </div>
+            <div class="hero-num" style="color: var(--emerald);">2.30×</div>
+            <div class="caption" style="margin-bottom: 12px;">Recall improvement at K=100 (62.6% vs 27.3% FIFO)</div>
+            <div class="caption" style="color: #94a3b8;">100% recall at K=200, reducing review labor cost by 74.3% vs full-queue exhaustion.</div>
+          </div>
+          <a href="/api/review-queue/capacity" target="_blank" class="pill-btn" style="text-decoration: none; width: fit-content; margin-top: 18px;">
+            <span>View Full API Data &rarr;</span>
+          </a>
+        </div>
+
+        <!-- Card 6: AI Security Suite -->
+        <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="font-size: 10px; font-weight: 700; color: var(--red); text-transform: uppercase; font-family: var(--font-mono); margin-bottom: 6px; letter-spacing: 0.05em;">
+              Advisory Safety & Boundary Defense
+            </div>
+            <div style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px;">
+              AI Security & Prompt Injection Defense Suite
+            </div>
+            <div class="caption" style="margin-bottom: 16px;">
+              Adversarial jailbreak and payload injection battery (10 vectors) against post-generation validator.
+            </div>
+            <div class="hero-num" style="color: var(--red);">10/10</div>
+            <div class="caption" style="margin-bottom: 12px;">Prompt injection attacks caught post-hardening (100.0%)</div>
+            <div class="caption" style="color: #94a3b8;">Hardened validator blocks score smuggling, action leakage, system overrides, and delimiter escapes.</div>
+          </div>
+          <a href="/api/ai-security" target="_blank" class="pill-btn" style="text-decoration: none; width: fit-content; margin-top: 18px;">
+            <span>View Full API Data &rarr;</span>
+          </a>
+        </div>
+
+        <!-- Card 7: Production Gateway Bridge -->
+        <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="font-size: 10px; font-weight: 700; color: var(--blue); text-transform: uppercase; font-family: var(--font-mono); margin-bottom: 6px; letter-spacing: 0.05em;">
+              Production Integration Bridge
+            </div>
+            <div style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px;">
+              Dual-Path Payment Gateway Architecture
+            </div>
+            <div class="caption" style="margin-bottom: 16px;">
+              Razorpay/Stripe webhook adapter decoupling in-line sync scoring (&lt;30ms) from async graph routing (&lt;500ms).
+            </div>
+            <div class="hero-num" style="color: var(--blue);">3.01 ms <span style="font-size:16px; color: var(--text-dim); font-weight:400">/ 10.31 ms</span></div>
+            <div class="caption" style="margin-bottom: 12px;">Measured p50 Latency (Sync In-Line / Async Graph Enrichment)</div>
+            <div class="caption" style="color: #94a3b8;">Prototype design-target in local mock environment. Sync actions (ALLOW/2FA/BLOCK) non-authoritative; preserves sync/async conflict signals.</div>
+          </div>
+          <a href="/api/gateway/spec" target="_blank" class="pill-btn" style="text-decoration: none; width: fit-content; margin-top: 18px;">
+            <span>View Gateway Spec &rarr;</span>
+          </a>
+        </div>
+
+        <!-- Card 8: Longitudinal Escalation Policy -->
+        <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="font-size: 10px; font-weight: 700; color: var(--purple); text-transform: uppercase; font-family: var(--font-mono); margin-bottom: 6px; letter-spacing: 0.05em;">
+              Lifecycle Evolving-Risk Policy
+            </div>
+            <div style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px;">
+              Longitudinal Escalation State Machine
+            </div>
+            <div class="caption" style="margin-bottom: 16px;">
+              Multi-stage ring lifecycle escalation policy evaluated across N=19 late-forming rings (Days 55–90).
+            </div>
+            <div class="hero-num" style="color: var(--purple);">5.93 d <span style="font-size:16px; color: var(--text-dim); font-weight:400">(Organic Rings)</span></div>
+            <div class="caption" style="margin-bottom: 12px;">Advance warning vs ring completion (14/19 active rings; 18.60d on 5 sleeper rings)</div>
+            <div class="caption" style="color: #94a3b8;">Identifies candidate accounts for human-reviewed network-level quarantine hold; zero modification to DecisionEngine authority.</div>
+          </div>
+          <a href="/api/temporal-escalation/summary" target="_blank" class="pill-btn" style="text-decoration: none; width: fit-content; margin-top: 18px;">
+            <span>View Escalation Summary &rarr;</span>
+          </a>
+        </div>
+
+        <!-- Card 9: Handcrafted Topology Battery -->
+        <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="font-size: 10px; font-weight: 700; color: var(--emerald); text-transform: uppercase; font-family: var(--font-mono); margin-bottom: 6px; letter-spacing: 0.05em;">
+              Out-of-Distribution Battery
+            </div>
+            <div style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px;">
+              25 Hand-Crafted Topology Stress Battery
+            </div>
+            <div class="caption" style="margin-bottom: 16px;">
+              Deterministic structural failure battery constructed out-of-distribution without simulator.py.
+            </div>
+            <div class="hero-num" style="color: var(--emerald);">85.19% <span style="font-size:16px; color: var(--text-dim); font-weight:400">vs Naive 54.32%</span></div>
+            <div class="caption" style="margin-bottom: 12px;">Effective Recall (138/162 accounts caught, +117 false negatives rescued)</div>
+            <div class="caption" style="color: #94a3b8;">100% recall on temporal/entity evasion. Honest limitation: 7/24 Family D accounts missed under extreme signal sparsity.</div>
+          </div>
+          <a href="/api/handcrafted-adversarial/summary" target="_blank" class="pill-btn" style="text-decoration: none; width: fit-content; margin-top: 18px;">
+            <span>View Topology Battery &rarr;</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION H: KNOWN LIMITATIONS -->
     <section>
       <div class="section-header">
         <div class="section-title">
@@ -1041,9 +1461,250 @@
         const sugList = document.getElementById('ai-suggestions');
         sugList.innerHTML = ai.analyst_suggestions.map(s => `<li>${s}</li>`).join('');
 
+        // Load Subgraph Neighborhood & Investigation Checklist
+        await loadGraphNeighborhood(accountId);
+
       } catch (e) {
         console.error('Failed to load decision for account', accountId, e);
       }
+    }
+
+    // Load Subgraph Neighborhood
+    async function loadGraphNeighborhood(accountId) {
+      try {
+        const res = await fetch(`/api/graph-neighborhood/${accountId}`);
+        if (!res.ok) return;
+        const data = await res.json();
+
+        // Update neighbor count badge and truncation note
+        const pill = document.getElementById('graph-neighbor-pill');
+        pill.innerText = `${data.total_neighbors_count} Connected Neighbors`;
+        if (data.is_truncated) {
+          pill.innerText += ' (Top 25 Rendered)';
+        }
+
+        const noteEl = document.getElementById('graph-truncation-note');
+        if (data.truncation_note) {
+          noteEl.innerText = data.truncation_note;
+        } else {
+          noteEl.innerText = '1-hop multi-signal topology extracted as of test cutoff (reusing temporal graph builder)';
+        }
+
+        // Render SVG Graph
+        renderSubgraphSVG(data);
+
+        // Render Investigation Checklist
+        renderChecklist(data.investigation_checklist);
+
+      } catch (e) {
+        console.error('Failed to load graph neighborhood', accountId, e);
+      }
+    }
+
+    function renderSubgraphSVG(data) {
+      const svg = document.getElementById('subgraph-svg');
+      svg.innerHTML = '';
+
+      const nodes = data.nodes || [];
+      const edges = data.edges || [];
+      if (nodes.length === 0) {
+        svg.innerHTML = '<text x="380" y="170" fill="#64748b" font-family="JetBrains Mono" font-size="13" text-anchor="middle">No connected graph neighbors found for this account</text>';
+        return;
+      }
+
+      const W = 760, H = 340;
+      const cx = W / 2, cy = H / 2;
+
+      // Map node positions
+      const centerNode = nodes.find(n => n.is_center) || nodes[0];
+      const peerNodes = nodes.filter(n => !n.is_center);
+      const posMap = {};
+      posMap[centerNode.id] = { x: cx, y: cy };
+
+      const N = peerNodes.length;
+      if (N <= 12) {
+        const rx = 270, ry = 110;
+        peerNodes.forEach((node, i) => {
+          const angle = (2 * Math.PI * i) / Math.max(1, N) - Math.PI / 2;
+          posMap[node.id] = {
+            x: cx + rx * Math.cos(angle),
+            y: cy + ry * Math.sin(angle)
+          };
+        });
+      } else {
+        // Concentric ellipses for dense neighborhoods
+        const half = Math.ceil(N / 2);
+        const rx1 = 180, ry1 = 75;
+        const rx2 = 300, ry2 = 125;
+        peerNodes.forEach((node, i) => {
+          if (i < half) {
+            const angle = (2 * Math.PI * i) / half - Math.PI / 2;
+            posMap[node.id] = { x: cx + rx1 * Math.cos(angle), y: cy + ry1 * Math.sin(angle) };
+          } else {
+            const j = i - half;
+            const count2 = N - half;
+            const angle = (2 * Math.PI * j) / count2 - Math.PI / 2 + Math.PI / count2;
+            posMap[node.id] = { x: cx + rx2 * Math.cos(angle), y: cy + ry2 * Math.sin(angle) };
+          }
+        });
+      }
+
+      // Color mapping for edge types
+      const edgeColors = {
+        'shared_payout': '#ef4444',
+        'shared_device': '#3b82f6',
+        'shared_ip': '#10b981',
+        'shared_instrument': '#f59e0b',
+        'referral': '#a855f7',
+        'other': '#64748b'
+      };
+
+      // Draw Edges
+      edges.forEach(e => {
+        const p1 = posMap[e.source];
+        const p2 = posMap[e.target];
+        if (!p1 || !p2) return;
+
+        const color = edgeColors[e.primary_type] || '#64748b';
+        const strokeW = Math.min(4, Math.max(1.5, e.weight));
+
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', p1.x);
+        line.setAttribute('y1', p1.y);
+        line.setAttribute('x2', p2.x);
+        line.setAttribute('y2', p2.y);
+        line.setAttribute('stroke', color);
+        line.setAttribute('stroke-width', strokeW);
+        line.setAttribute('stroke-opacity', '0.65');
+        line.setAttribute('stroke-dasharray', e.primary_type === 'referral' ? '4,4' : 'none');
+
+        const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+        title.textContent = `Edge: ${e.source} <-> ${e.target} | Type: ${e.edge_types.join(', ')} ${e.shared_entity ? '(' + e.shared_entity + ')' : ''} | Weight: ${e.weight}`;
+        line.appendChild(title);
+
+        svg.appendChild(line);
+      });
+
+      // Draw Peer Nodes
+      peerNodes.forEach(node => {
+        const pos = posMap[node.id];
+        if (!pos) return;
+
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
+        // Node fill color based on decision / label
+        let nodeFill = '#1e2c4f';
+        let strokeColor = '#3b82f6';
+        if (node.decision === 'ACT' || node.label === 'abusive_coordinated') {
+          nodeFill = 'rgba(239, 68, 68, 0.25)';
+          strokeColor = '#ef4444';
+        } else if (node.decision === 'REVIEW') {
+          nodeFill = 'rgba(245, 158, 11, 0.25)';
+          strokeColor = '#f59e0b';
+        } else if (node.decision === 'WAIT_MONITOR' || node.label === 'benign_independent') {
+          nodeFill = 'rgba(16, 185, 129, 0.2)';
+          strokeColor = '#10b981';
+        }
+
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', pos.x);
+        circle.setAttribute('cy', pos.y);
+        circle.setAttribute('r', '11');
+        circle.setAttribute('fill', nodeFill);
+        circle.setAttribute('stroke', strokeColor);
+        circle.setAttribute('stroke-width', '2');
+
+        const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+        title.textContent = `Account: ${node.id} | Degree: ${node.degree} | Decision: ${node.decision || 'N/A'} | Label: ${node.label}`;
+        circle.appendChild(title);
+        g.appendChild(circle);
+
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', pos.x);
+        text.setAttribute('y', pos.y + 20);
+        text.setAttribute('fill', '#94a3b8');
+        text.setAttribute('font-family', 'JetBrains Mono');
+        text.setAttribute('font-size', '8.5');
+        text.setAttribute('text-anchor', 'middle');
+        text.textContent = node.id;
+        g.appendChild(text);
+
+        svg.appendChild(g);
+      });
+
+      // Draw Center Node (Highlighted)
+      if (posMap[centerNode.id]) {
+        const cp = posMap[centerNode.id];
+        const gCenter = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
+        // Outer glow circle
+        const glow = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        glow.setAttribute('cx', cp.x);
+        glow.setAttribute('cy', cp.y);
+        glow.setAttribute('r', '28');
+        glow.setAttribute('fill', 'rgba(0, 229, 255, 0.15)');
+        glow.setAttribute('stroke', 'rgba(0, 229, 255, 0.4)');
+        glow.setAttribute('stroke-width', '1.5');
+        glow.setAttribute('stroke-dasharray', '3,3');
+        gCenter.appendChild(glow);
+
+        // Core Center Circle
+        const core = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        core.setAttribute('cx', cp.x);
+        core.setAttribute('cy', cp.y);
+        core.setAttribute('r', '18');
+        core.setAttribute('fill', '#070b14');
+        core.setAttribute('stroke', '#00e5ff');
+        core.setAttribute('stroke-width', '3');
+        gCenter.appendChild(core);
+
+        const textCenter = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        textCenter.setAttribute('x', cp.x);
+        textCenter.setAttribute('y', cp.y - 32);
+        textCenter.setAttribute('fill', '#00e5ff');
+        textCenter.setAttribute('font-family', 'JetBrains Mono');
+        textCenter.setAttribute('font-size', '11');
+        textCenter.setAttribute('font-weight', '700');
+        textCenter.setAttribute('text-anchor', 'middle');
+        textCenter.textContent = `TARGET: ${centerNode.id}`;
+        gCenter.appendChild(textCenter);
+
+        svg.appendChild(gCenter);
+      }
+    }
+
+    function renderChecklist(checklist) {
+      const container = document.getElementById('investigation-checklist');
+      container.innerHTML = '';
+
+      if (!checklist || checklist.length === 0) {
+        container.innerHTML = '<div style="font-size:12px; color:var(--text-dim);">No investigation items generated.</div>';
+        return;
+      }
+
+      checklist.forEach((item, idx) => {
+        const card = document.createElement('div');
+        card.className = `checklist-card sev-${item.severity}`;
+
+        card.innerHTML = `
+          <input type="checkbox" id="chk-${idx}" style="margin-top: 3px; cursor: pointer; accent-color: var(--cyan);">
+          <div style="flex: 1;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+              <span class="sev-badge sev-${item.severity}">${item.severity}</span>
+              <label for="chk-${idx}" style="font-size: 13px; font-weight: 700; color: #fff; cursor: pointer;">
+                ${item.step}
+              </label>
+            </div>
+            <div style="font-size: 12px; color: #cbd5e1; margin-bottom: 4px;">
+              <strong>Observed Finding:</strong> ${item.finding}
+            </div>
+            <div style="font-size: 12px; color: var(--cyan); font-family: var(--font-mono);">
+              &rarr; Action: ${item.action}
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
     }
 
     // Load Trajectory

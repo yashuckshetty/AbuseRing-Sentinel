@@ -1,0 +1,86 @@
+{
+  "account_id": "ACC_04870",
+  "category": "Referral Farming",
+  "decision": "REVIEW",
+  "routing_lane": "conflict_review",
+  "sym_kl_divergence": 10.2151,
+  "evidence_conflict": true,
+  "probabilities": {
+    "p_abusive_structural": 0.0,
+    "p_abusive_behavioral": 0.9413,
+    "p_abusive_fused": 0.0182,
+    "p_benign_coord_fused": 0.0465,
+    "p_benign_indep_fused": 0.9354
+  },
+  "input_payload": {
+    "account_id": "ACC_04870",
+    "structural_sub_score": 0.0,
+    "behavioral_sub_score": 0.9413,
+    "p_abusive": 0.0182,
+    "p_benign_coord": 0.0465,
+    "p_benign_indep": 0.9354,
+    "sym_kl_divergence": 10.2151,
+    "evidence_conflict": true,
+    "conflict_reason": "Structural=0.000 vs Behavioral=0.941 (sym_KL=10.215)",
+    "n_orders": 2,
+    "n_returns": 0,
+    "return_rate": 0.0,
+    "promo_rate": 0.0,
+    "has_promo": 0,
+    "n_referrals_received": 1,
+    "n_referrals_sent": 1,
+    "burst_score": 1,
+    "account_age_days": 89.4,
+    "observation_window_days": 89.4,
+    "shared_payout_degree": 0,
+    "shared_device_degree": 0,
+    "shared_ip_degree": 5,
+    "referral_degree": 2,
+    "multi_signal_edges": 0,
+    "connected_component_size": 4987,
+    "known_ring_ids": [],
+    "known_shared_entity_ids": [],
+    "as_of_ts": 1707776000
+  },
+  "real_llm_response": {
+    "conflict_explanation": "A significant divergence exists between the zero structural sub-score (0.0) and the high behavioral sub-score (0.9413), flagged by an evidence conflict with a symmetric KL divergence of 10.2151.",
+    "key_signals": [
+      "High behavioral sub-score (0.9413) contrasting with structural sub-score (0.0)",
+      "Shared IP degree of 5 with zero shared device or payout degrees",
+      "Connected component size of 4987",
+      "Burst score of 1 recorded over 2 orders and an account age of 89.4 days",
+      "Referral degree of 2 (1 referral sent, 1 referral received)"
+    ],
+    "analyst_suggestions": [
+      "Human reviewer should inspect IP access logs for account ACC_04870 to differentiate public/corporate networks from potential coordinated proxy usage.",
+      "Human reviewer should examine the referral network involving the 1 sent and 1 received referral to verify legitimate user invite behavior.",
+      "Human reviewer should evaluate order timing and transaction details associated with the burst score metric."
+    ],
+    "qualitative_assessment": "Evidence suggests an ambiguous signal driven by high behavioral anomaly scores alongside non-suspicious structural ties, which may reflect benign infrastructure sharing (e.g., VPN or shared network) rather than confirmed multi-account coordination."
+  },
+  "mock_response": {
+    "conflict_explanation": "Account ACC_04870 demonstrates elevated behavioral velocity (behavioral_sub_score=0.941, burst_score=1, promo_rate=0.000) despite limited structural payout co-sharing (shared_payout_degree=0). This divergence is characteristic of referral-farming or isolated promotional extraction where shared cashout infrastructure has not yet manifested.",
+    "key_signals": [
+      "shared_payout_degree=0",
+      "behavioral_sub_score=0.9413",
+      "structural_sub_score=0.0000",
+      "burst_score=1",
+      "sym_kl=10.2151",
+      "n_orders=2"
+    ],
+    "analyst_suggestions": [
+      "Inspect referral chain and recipient account creation times linked to ACC_04870",
+      "Verify whether order timestamps correlate with promotional campaign launch windows"
+    ],
+    "qualitative_assessment": "Elevated behavioral activity with minimal payout-sharing; human review recommended to evaluate referral/promotional validity.",
+    "_is_mock": true
+  },
+  "validation": {
+    "boundary_passed": true,
+    "violations": []
+  },
+  "latency": {
+    "real_llm_seconds": 31.8831,
+    "mock_seconds": 0.0009
+  }
+}

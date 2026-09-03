@@ -3,6 +3,8 @@ Unit and integration tests for FastAPI backend service.
 Verifies all read-only artifact endpoints and live DecisionEngine execution.
 """
 
+import json
+from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 from api.main import app
@@ -16,7 +18,7 @@ def test_health_endpoint():
     data = response.json()
     assert data["status"] == "healthy"
     assert data["artifacts_loaded"] is True
-    assert data["files_checked"] == 9
+    assert data["files_checked"] == 16
     assert len(data["missing_files"]) == 0
 
 
@@ -180,3 +182,175 @@ def test_decision_engine_api_canonical_consistency():
     assert acc_505["decision"] == "WAIT_MONITOR"
     assert acc_505["routing_lane"] == "fused_auto"
 
+
+def test_gnn_comparison_endpoint():
+    """Verifies that the Rung 6 GNN comparison endpoint returns valid evaluation payload dynamically matching artifact."""
+    res = client.get("/api/gnn-comparison")
+    assert res.status_code == 200
+    data = res.json()
+    assert "gnn_test_metrics" in data
+    assert "structural_lgbm_test_metrics" in data
+    assert "robustness_subsets" in data
+
+    artifact_path = Path("evals/results/gnn_comparison_results.json")
+    assert artifact_path.exists()
+    with open(artifact_path, "r", encoding="utf-8") as f:
+        expected = json.load(f)
+
+    assert data["gnn_test_metrics"]["model"] == expected["gnn_test_metrics"]["model"]
+    assert data["gnn_test_metrics"]["precision_abusive"] == expected["gnn_test_metrics"]["precision_abusive"]
+    assert data["gnn_test_metrics"]["recall_abusive"] == expected["gnn_test_metrics"]["recall_abusive"]
+    assert data["gnn_test_metrics"]["f1_abusive"] == expected["gnn_test_metrics"]["f1_abusive"]
+    assert data["robustness_subsets"]["referral_farming"]["n_accounts"] == expected["robustness_subsets"]["referral_farming"]["n_accounts"]
+    assert data["robustness_subsets"]["referral_farming"]["n_accounts"] == 143
+
+
+def test_scenario_b_endpoint():
+    """Verifies that the Scenario B generalization endpoint returns valid evaluation payload."""
+    res = client.get("/api/scenario-b")
+    assert res.status_code == 200
+    data = res.json()
+    assert "standalone_models" in data
+    assert "decision_engine_routing" in data
+    assert "feature_transfer_stats" in data
+    assert data["n_accounts"] == 1800
+    assert data["n_ac"] == 270
+    assert data["decision_engine_routing"]["auto_act_lane_activated"] is False
+    assert data["decision_engine_routing"]["auto_act_false_positives"] == 0
+    assert data["decision_engine_routing"]["auto_act_false_positive_rate"] is None
+    assert "escalate" not in data["decision_engine_routing"]["routing_lanes"]
+
+
+def test_adversarial_evasion_endpoint():
+    """Verifies that the Adversarial Evasion endpoint returns valid evaluation payload."""
+    res = client.get("/api/adversarial-evasion")
+    assert res.status_code == 200
+    data = res.json()
+    assert "scenarios" in data
+    assert data["n_test_accounts"] == 3467
+    assert data["n_true_ac"] == 198
+    assert "strategy_1_anti_burst" in data["scenarios"]
+    assert "strategy_4_combined_adaptive" in data["scenarios"]
+
+
+def test_dynamic_cost_endpoint():
+    """Verifies that the Dynamic Cost endpoint returns valid evaluation payload."""
+    res = client.get("/api/dynamic-cost")
+    assert res.status_code == 200
+    data = res.json()
+    assert "symmetric_break_even_analysis" in data
+    assert "lag_sensitivity_curve" in data
+
+
+def test_capacity_constrained_endpoint():
+    """Verifies that the Capacity-Constrained Review Queue endpoint returns valid evaluation payload."""
+    res = client.get("/api/review-queue/capacity")
+    assert res.status_code == 200
+    data = res.json()
+    assert "sweep_results" in data
+    assert "conflict_aware" in data["sweep_results"]
+    assert "fifo" in data["sweep_results"]
+
+
+def test_graph_neighborhood_endpoint():
+    """Verifies that /api/graph-neighborhood/{account_id} returns valid payload for sample accounts."""
+    res = client.get("/api/graph-neighborhood/ACC_04430")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["account_id"] == "ACC_04430"
+    assert len(data["nodes"]) > 0
+    assert len(data["edges"]) > 0
+    assert "investigation_checklist" in data
+
+
+def test_gateway_spec_endpoint():
+    """Verifies gateway specification endpoint returns valid dual-path contract with disclaimers."""
+    res = client.get("/api/gateway/spec")
+    assert res.status_code == 200
+    data = res.json()
+    assert "design_targets" in data
+    assert "sync_path" in data["design_targets"]
+    assert "async_path" in data["design_targets"]
+    assert "Prototype design-target" in data["qualifier"]
+
+
+def test_gateway_simulate_event_endpoint():
+    """Verifies simulate-event dual-path execution flow through API."""
+    payload = {
+        "event": "payment.authorized",
+        "payload": {
+            "payment": {
+                "entity": {
+                    "id": "pay_test_api_01",
+                    "amount": 50000,
+                    "currency": "INR",
+                    "notes": {
+                        "account_id": "ACC_04870",
+                        "device_id": "DEV_API_1"
+                    }
+                }
+            }
+        }
+    }
+    res = client.post("/api/gateway/simulate-event", json=payload)
+    assert res.status_code == 200
+    data = res.json()
+    assert data["account_id"] == "ACC_04870"
+    assert "sync_authorization" in data
+    assert "async_enrichment" in data
+    assert data["sync_authorization"]["action"] in ["ALLOW", "CHALLENGE_2FA", "BLOCK"]
+    assert data["async_enrichment"]["authoritative_decision"] in ["ACT", "REVIEW", "WAIT_MONITOR", "ABSTAIN"]
+    assert "Prototype design-target" in data["sync_authorization"]["qualifier"]
+    assert "Prototype design-target" in data["async_enrichment"]["qualifier"]
+
+
+def test_gateway_benchmark_endpoint():
+    """Verifies gateway benchmark endpoint executes and includes mandatory qualifiers."""
+    res = client.get("/api/gateway/benchmark?n_trials=10")
+    assert res.status_code == 200
+    data = res.json()
+    assert "sync_path" in data
+    assert "async_path" in data
+    assert "Prototype design-target" in data["qualifier"]
+
+
+def test_temporal_escalation_summary_endpoint():
+    """Verifies /api/temporal-escalation/summary endpoint across 19 rings."""
+    res = client.get("/api/temporal-escalation/summary")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["n_rings_evaluated"] == 19
+    assert "summary_metrics" in data
+    assert data["summary_metrics"]["blended_mean_lead_time_vs_complete_days"] >= 0.0
+    assert "pre_positioned_sleeper_rings" in data["summary_metrics"]
+    assert "active_formation_rings" in data["summary_metrics"]
+    assert "Evaluated across the full population of N=19 late-forming rings" in data["qualifier"]
+
+
+def test_temporal_escalation_ring_endpoint():
+    """Verifies /api/temporal-escalation/ring/{ring_id} endpoint for PROMO_001."""
+    res = client.get("/api/temporal-escalation/ring/PROMO_001")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["ring_id"] == "PROMO_001"
+    assert "checkpoint_history" in data
+    assert len(data["checkpoint_history"]) == 5
+
+
+def test_handcrafted_adversarial_summary_endpoint():
+    """Verifies /api/handcrafted-adversarial/summary endpoint across 25 topologies."""
+    res = client.get("/api/handcrafted-adversarial/summary")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["total_topologies_evaluated"] == 25
+    assert data["overall_sentinel_effective_recall_pct"] >= 80.0
+    assert "Independent out-of-distribution structural stress battery" in data["qualifier"]
+
+
+def test_handcrafted_adversarial_topology_endpoint():
+    """Verifies /api/handcrafted-adversarial/topology/{topo_id} endpoint."""
+    res = client.get("/api/handcrafted-adversarial/topology/TOPO_01_DENSE_CLIQUE_CAMO")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["topo_id"] == "TOPO_01_DENSE_CLIQUE_CAMO"
+    assert "decision_breakdown" in data

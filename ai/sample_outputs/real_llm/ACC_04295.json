@@ -1,0 +1,85 @@
+{
+  "account_id": "ACC_04295",
+  "category": "Promo Abuse",
+  "decision": "ACT",
+  "routing_lane": "fused_auto",
+  "sym_kl_divergence": 0.001,
+  "evidence_conflict": false,
+  "probabilities": {
+    "p_abusive_structural": 0.9999,
+    "p_abusive_behavioral": 0.9993,
+    "p_abusive_fused": 0.9998,
+    "p_benign_coord_fused": 0.0002,
+    "p_benign_indep_fused": 0.0
+  },
+  "input_payload": {
+    "account_id": "ACC_04295",
+    "structural_sub_score": 0.9999,
+    "behavioral_sub_score": 0.9993,
+    "p_abusive": 0.9998,
+    "p_benign_coord": 0.0002,
+    "p_benign_indep": 0.0,
+    "sym_kl_divergence": 0.001,
+    "evidence_conflict": false,
+    "conflict_reason": "Structural=1.000 vs Behavioral=0.999 (sym_KL=0.001)",
+    "n_orders": 7,
+    "n_returns": 0,
+    "return_rate": 0.0,
+    "promo_rate": 0.571,
+    "has_promo": 1,
+    "n_referrals_received": 1,
+    "n_referrals_sent": 0,
+    "burst_score": 3,
+    "account_age_days": 87.0,
+    "observation_window_days": 87.0,
+    "shared_payout_degree": 0,
+    "shared_device_degree": 35,
+    "shared_ip_degree": 31,
+    "referral_degree": 1,
+    "multi_signal_edges": 23,
+    "connected_component_size": 4987,
+    "known_ring_ids": [],
+    "known_shared_entity_ids": [],
+    "as_of_ts": 1707776000
+  },
+  "real_llm_response": {
+    "conflict_explanation": "Structural and behavioral signals show high alignment with virtually no divergence for account ACC_04295, indicating that network-level graph indicators and individual account behavioral metrics point in a consistent direction.",
+    "key_signals": [
+      "High degree of shared devices (35) and shared IPs (31)",
+      "Membership in a large connected component containing 4,987 entities with 23 multi-signal edges",
+      "Moderate order activity (7 orders) with promotional discount usage present and a burst score of 3",
+      "Account age of 87 days with zero returns recorded"
+    ],
+    "analyst_suggestions": [
+      "Human reviewer should inspect device fingerprint details and IP address metadata connected to ACC_04295 to evaluate potential entity sharing.",
+      "Human reviewer should examine order logs and promotional code redemptions across linked accounts within the connected component.",
+      "Human reviewer should verify if the high shared device and IP counts correspond to legitimate shared network infrastructure or coordinated account creation."
+    ],
+    "qualitative_assessment": "Evidence suggests potential coordinated activity based on the extensive device and IP overlaps combined with placement in a dense network component, though human evaluation is necessary to distinguish coordinated manipulation from benign high-density user environments."
+  },
+  "mock_response": {
+    "conflict_explanation": "Account ACC_04295 exhibits convergent high-risk signals across both structural (structural_sub_score=1.000, shared_payout_degree=0) and behavioral (behavioral_sub_score=0.999, burst_score=3, promo_rate=0.571) modalities.",
+    "key_signals": [
+      "shared_payout_degree=0",
+      "behavioral_sub_score=0.9993",
+      "structural_sub_score=0.9999",
+      "burst_score=3",
+      "sym_kl=0.0010",
+      "n_orders=7"
+    ],
+    "analyst_suggestions": [
+      "Cross-reference payout destination cluster with previous confirmed abuse cases",
+      "Review velocity of related accounts operating within the same burst window"
+    ],
+    "qualitative_assessment": "Strong convergent evidence of coordinated abusive activity across graph and behavioral indicators.",
+    "_is_mock": true
+  },
+  "validation": {
+    "boundary_passed": true,
+    "violations": []
+  },
+  "latency": {
+    "real_llm_seconds": 8.7593,
+    "mock_seconds": 0.0008
+  }
+}

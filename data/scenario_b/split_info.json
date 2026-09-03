@@ -1,0 +1,9 @@
+{
+  "sim_start_ts": 1700000000,
+  "train_end_ts": 1704665600,
+  "val_end_ts": 1706220800,
+  "test_end_ts": 1707776000,
+  "n_accounts": 1800,
+  "scenario": "B_subscription_trial_abuse",
+  "description": "Subscription platform with trial abuse via virtual cards and corporate multi-seat billing"
+}

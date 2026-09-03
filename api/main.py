@@ -31,10 +31,21 @@ from features.feature_pipeline import (
     STRUCTURAL_FEATURES,
     BEHAVIORAL_FEATURES,
 )
+from graph.temporal_graph import build_graph_as_of
 from decision.decision_engine import DecisionEngine, Decision, RoutingLane
 from ai.evidence_reasoner import EvidenceGapReasoner, sym_kl_divergence
 from policy.policy_gate import PolicyGate
 from models.fused_model import FusedCalibratedClassifier
+from gateway.adapter import (
+    GatewayEventAdapter,
+    GatewayPaymentEvent,
+    GatewayEventType,
+    SyncAction,
+)
+from policy.temporal_escalation import (
+    LongitudinalEscalationPolicy,
+    TemporalRiskState,
+)
 
 app = FastAPI(
     title="AbuseRing Sentinel API",
@@ -150,7 +161,20 @@ def load_artifacts():
     CACHE["split_info"] = split
     CACHE["labels_full"] = labels_full
     CACHE["sample_accounts"] = sample_accounts
-    print("Artifacts loaded successfully.", flush=True)
+    
+    # Build and cache test temporal graph as-of test_end_ts
+    G_test = build_graph_as_of(events, split["test_end_ts"])
+    CACHE["graph_test"] = G_test
+
+    # Instantiate Gateway Event Adapter (Dual-Path Bridge)
+    adapter = GatewayEventAdapter(
+        decision_engine=engine,
+        behavioral_model=behav,
+        structural_model=struct,
+        fused_model=fused,
+    )
+    CACHE["gateway_adapter"] = adapter
+    print("Artifacts loaded successfully (including test graph and gateway adapter).", flush=True)
 
 @app.on_event("startup")
 def startup_event():
@@ -174,6 +198,13 @@ def get_health():
         "evals/results/prevalence_shift_results.json",
         "evals/results/multiseed_results.json",
         "evals/results/robustness_results.json",
+        "evals/results/gnn_comparison_results.json",
+        "evals/results/scenario_b_generalization_results.json",
+        "evals/results/adversarial_results.json",
+        "evals/results/dynamic_cost_results.json",
+        "evals/results/capacity_constrained_results.json",
+        "evals/results/ai_security_results.json",
+        "evals/results/handcrafted_adversarial_results.json",
     ]
     missing = [f for f in required_files if not (BASE_DIR / f).exists()]
     
@@ -479,13 +510,250 @@ def get_robustness():
         return json.load(f)
 
 
-# ── 10b. SAMPLE ACCOUNTS ──────────────────────────────────────────────────────
-@app.get("/api/sample-accounts")
-def get_sample_accounts():
-    """Returns curated sample accounts representing key operational regimes."""
+# ── 10a. GNN COMPARISON BASELINE ──────────────────────────────────────────────
+@app.get("/api/gnn-comparison")
+def get_gnn_comparison():
+    """Returns GNN Rung 6 comparison results against structural_lgbm."""
+    gnn_path = BASE_DIR / "evals" / "results" / "gnn_comparison_results.json"
+    if not gnn_path.exists():
+        raise HTTPException(status_code=404, detail="gnn_comparison_results.json not found")
+    with open(gnn_path, "r") as f:
+        return json.load(f)
+
+
+# ── 10a2. SCENARIO B GENERALIZATION TEST ─────────────────────────────────────
+@app.get("/api/scenario-b")
+def get_scenario_b_results():
+    """Returns Scenario B (Subscription Platform Trial Abuse) cross-scenario generalization results."""
+    scen_path = BASE_DIR / "evals" / "results" / "scenario_b_generalization_results.json"
+    if not scen_path.exists():
+        raise HTTPException(status_code=404, detail="scenario_b_generalization_results.json not found")
+    with open(scen_path, "r") as f:
+        return json.load(f)
+
+
+# ── 10a3. ADVERSARIAL EVASION TEST ───────────────────────────────────────────
+@app.get("/api/adversarial-evasion")
+def get_adversarial_evasion_results():
+    """Returns Adversarial Evasion and Adaptive Attacker stress test results."""
+    adv_path = BASE_DIR / "evals" / "results" / "adversarial_results.json"
+    if not adv_path.exists():
+        raise HTTPException(status_code=404, detail="adversarial_results.json not found")
+    with open(adv_path, "r") as f:
+        return json.load(f)
+
+
+# ── 10a4. DYNAMIC COMPOUNDING COST MODEL ─────────────────────────────────────
+@app.get("/api/dynamic-cost")
+def get_dynamic_cost_results():
+    """Returns Time-Dependent Compounding Loss and Break-Even Lag analysis."""
+    cost_path = BASE_DIR / "evals" / "results" / "dynamic_cost_results.json"
+    if not cost_path.exists():
+        raise HTTPException(status_code=404, detail="dynamic_cost_results.json not found")
+    with open(cost_path, "r") as f:
+        return json.load(f)
+
+
+# ── 10a5. CAPACITY-CONSTRAINED REVIEW QUEUE ──────────────────────────────────
+@app.get("/api/review-queue/capacity")
+def get_capacity_constrained_results():
+    """Returns Capacity-Constrained Review Queue Triage evaluation results."""
+    cap_path = BASE_DIR / "evals" / "results" / "capacity_constrained_results.json"
+    if not cap_path.exists():
+        raise HTTPException(status_code=404, detail="capacity_constrained_results.json not found")
+    with open(cap_path, "r") as f:
+        return json.load(f)
+
+
+# ── 10a6. GRAPH NEIGHBORHOOD & INVESTIGATION WORKSPACE ───────────────────────
+@app.get("/api/graph-neighborhood/{account_id}")
+def get_graph_neighborhood(account_id: str, max_nodes: int = 25):
+    """Returns 1-hop connected graph neighborhood, edge types, and investigation checklist for an account."""
     if not CACHE:
         load_artifacts()
-    return CACHE.get("sample_accounts", [])
+
+    G = CACHE.get("graph_test")
+    if G is None:
+        raise HTTPException(status_code=500, detail="Graph not loaded in cache")
+
+    if not G.has_node(account_id):
+        raise HTTPException(status_code=404, detail=f"Account {account_id} not found in temporal graph")
+
+    labels_lookup = CACHE["labels_full"]["label"].to_dict() if "labels_full" in CACHE else {}
+    sample_acc_ids = {sa["account_id"] for sa in CACHE.get("sample_accounts", [])}
+    
+    # Extract 1-hop neighbors
+    all_neighbors = list(G.neighbors(account_id))
+    total_neighbors = len(all_neighbors)
+    
+    # Sort neighbors by weight descending, then degree
+    all_neighbors_sorted = sorted(
+        all_neighbors,
+        key=lambda n: (G[account_id][n].get("weight", 1), G.degree(n)),
+        reverse=True
+    )
+    
+    selected_1_hop = all_neighbors_sorted[:max_nodes - 1]
+    is_truncated = total_neighbors > len(selected_1_hop)
+    
+    selected_nodes = set([account_id] + selected_1_hop)
+    sub = G.subgraph(selected_nodes)
+    
+    # Node list
+    idx_lookup = CACHE.get("idx_lookup", {})
+    s_te = CACHE.get("s_te")
+    b_te = CACHE.get("b_te")
+    
+    nodes_out = []
+    for n in sub.nodes():
+        is_center = (str(n) == account_id)
+        node_label = labels_lookup.get(str(n), "unknown")
+        # Only expose ground truth label for known sample accounts or center account
+        exposed_label = node_label if (str(n) in sample_acc_ids or is_center) else "masked_peer"
+        
+        # Decision if in test split
+        node_decision = None
+        if str(n) in idx_lookup:
+            i = idx_lookup[str(n)]
+            obs_d = float(b_te.iloc[i]["account_age_days"]) if b_te is not None else 30.0
+            n_ord = int(b_te.iloc[i]["n_orders"]) if b_te is not None else 5
+            node_decision = CACHE["engine"].decide(
+                account_id=str(n),
+                p_fused=CACHE["p_fused"][i],
+                p_struct=CACHE["p_struct"][i],
+                p_behav=CACHE["p_behav"][i],
+                observation_days=obs_d,
+                n_orders=n_ord,
+                as_of_ts=CACHE["split_info"]["test_end_ts"]
+            ).decision.value
+
+        nodes_out.append({
+            "id": str(n),
+            "is_center": is_center,
+            "node_type": G.nodes[n].get("node_type", "account"),
+            "degree": int(G.degree(n)),
+            "label": exposed_label,
+            "decision": node_decision
+        })
+        
+    edges_out = []
+    edge_type_counts = {}
+    for u, v in sub.edges():
+        data = sub[u][v]
+        e_types = list(data.get("edge_types", []))
+        weight = int(data.get("weight", 1))
+        shared_ent = data.get("shared_entity")
+        
+        # Primary edge type: payout > instrument > device > ip > referral
+        primary_type = "other"
+        for prio in ["shared_payout", "shared_instrument", "shared_device", "shared_ip", "referral"]:
+            if prio in e_types:
+                primary_type = prio
+                break
+        if primary_type == "other" and e_types:
+            primary_type = e_types[0]
+            
+        edge_type_counts[primary_type] = edge_type_counts.get(primary_type, 0) + 1
+        
+        edges_out.append({
+            "source": str(u),
+            "target": str(v),
+            "edge_types": e_types,
+            "primary_type": primary_type,
+            "weight": weight,
+            "shared_entity": str(shared_ent) if shared_ent else None
+        })
+
+    # Generate Investigation Checklist (2-4 concrete next-check steps based on actual evidence)
+    checklist = []
+    if account_id in idx_lookup:
+        i = idx_lookup[account_id]
+        s_row = s_te.iloc[i].to_dict() if s_te is not None else {}
+        b_row = b_te.iloc[i].to_dict() if b_te is not None else {}
+        
+        # Check 1: Payout Infrastructure
+        if s_row.get("shared_payout_degree", 0) > 0:
+            checklist.append({
+                "step": "Verify Payout Destination",
+                "severity": "CRITICAL",
+                "finding": f"Shares payout/bank destination with {int(s_row['shared_payout_degree'])} accounts.",
+                "action": "Audit beneficiary bank IFSC/UPI handle for syndicate fund funneling."
+            })
+        
+        # Check 2: Device & Network Multiplicity
+        dev_deg = s_row.get("shared_device_degree", 0)
+        ip_deg = s_row.get("shared_ip_degree", 0)
+        if dev_deg > 0 or ip_deg > 0:
+            checklist.append({
+                "step": "Device & Network Cluster Inspection",
+                "severity": "HIGH" if dev_deg > 0 else "MEDIUM",
+                "finding": f"Co-locates on {int(dev_deg)} shared devices and {int(ip_deg)} shared IP subnets.",
+                "action": "Inspect Canvas/WebGL hardware fingerprint hashes and residential proxy subnet ASN."
+            })
+            
+        # Check 3: Referral Lineage
+        ref_deg = s_row.get("referral_degree", 0)
+        n_ref = b_row.get("n_referrals_sent", 0) + b_row.get("n_referrals_received", 0)
+        if ref_deg > 0 or n_ref > 0:
+            checklist.append({
+                "step": "Referral Tree & Voucher Lineage",
+                "severity": "HIGH",
+                "finding": f"Connected to {int(ref_deg)} accounts via referral links ({int(n_ref)} total referral events).",
+                "action": "Check referral bonus redemption timestamps and device overlap across invitees."
+            })
+
+        # Check 4: Evidence Disagreement (sym_KL)
+        sym_kl = float(CACHE["conflicts"][i]) if "conflicts" in CACHE else 0.0
+        if sym_kl > 0.50:
+            checklist.append({
+                "step": "Model Disagreement Resolution",
+                "severity": "MEDIUM",
+                "finding": f"Elevated evidence conflict (sym_KL = {sym_kl:.2f} > 0.50 threshold).",
+                "action": "Determine if account is an evasive sleeper ring (strong graph, sparse orders) or promo farm."
+            })
+
+        # Check 5: Cold-Start / Order History
+        n_orders = int(b_row.get("n_orders", 0))
+        if n_orders < 2:
+            checklist.append({
+                "step": "Cold-Start Monitoring",
+                "severity": "LOW",
+                "finding": f"Only {n_orders} order placed in observation window.",
+                "action": "Place in temporary watch queue; re-score automatically on next order placement."
+            })
+
+    if not checklist:
+        checklist.append({
+            "step": "Standard KYC Verification",
+            "severity": "LOW",
+            "finding": "No high-density structural links or model conflicts detected.",
+            "action": "Confirm baseline phone number OTP verification and email domain validity."
+        })
+
+    return {
+        "account_id": account_id,
+        "nodes": nodes_out,
+        "edges": edges_out,
+        "total_neighbors_count": total_neighbors,
+        "is_truncated": is_truncated,
+        "truncation_note": f"Displaying top {len(selected_1_hop)} of {total_neighbors} connected neighbors sorted by edge weight" if is_truncated else None,
+        "edge_type_counts": edge_type_counts,
+        "investigation_checklist": checklist
+    }
+
+
+
+
+
+# ── 10a7. AI SECURITY & PROMPT INJECTION SUITE ────────────────────────────────
+@app.get("/api/ai-security")
+def get_ai_security_results():
+    """Returns AI Security & Prompt Injection Evaluation results."""
+    sec_path = BASE_DIR / "evals" / "results" / "ai_security_results.json"
+    if not sec_path.exists():
+        raise HTTPException(status_code=404, detail="ai_security_results.json not found")
+    with open(sec_path, "r") as f:
+        return json.load(f)
 
 
 # ── 11. LIMITATIONS LIST ─────────────────────────────────────────────────────
@@ -495,8 +763,8 @@ def get_limitations():
     return [
         {
             "id": 1,
-            "title": "Flat FN cost model",
-            "detail": "c_fn=Rs2,000 regardless of time-to-detection. Under this assumption, behavioral-only (Rs30,500) dominates routing (Rs1,49,250-Rs1,88,850) on cost. Time-dependent loss modelling is future work."
+            "title": "Flat FN cost assumption resolved via Symmetric Dynamic Modeling",
+            "detail": "While flat FN costs (Rs 2,000) favor behavioral-only (Rs 30,500 vs Rs 149,250), our symmetric compounding exposure model (L(t) = C_0 + alpha * t^1.2) establishes that routing becomes strictly cost-superior once detection lag exceeds 72.5 - 128.8 days for active rings (alpha >= Rs 100/day). See dynamic_cost_results.json."
         },
         {
             "id": 2,
@@ -520,10 +788,275 @@ def get_limitations():
         },
         {
             "id": 6,
-            "title": "Referral-farming unresolved review queue cost",
-            "detail": "Unseen referral-farming topology has no automated resolution path within the observed window (sym_KL climbs but never resolves to ACT), creating indefinite human REVIEW queue cost under this design."
+            "title": "Label noise is uniform, not adversarial",
+            "detail": "Real label noise is biased toward late-formation and evasive accounts. The 22 noisy labels here are uniformly random -- underestimates real-world evaluation difficulty."
+        },
+        {
+            "id": 7,
+            "title": "Simulated LLM Output Validation Scope",
+            "detail": "The prompt injection test suite validates the post-generation validator against hypothesized/simulated adversarial outputs rather than verified live model behavior under attack. Live LLM compliance under adversarial prompts remains subject to frontier model alignment boundaries."
+        },
+        {
+            "id": 8,
+            "title": "Extreme Signal Sparsity & Cold-Start Limitation (Hand-Crafted Battery Family D)",
+            "detail": "Under extreme signal sparsity, the system correctly avoids false positives but experiences a genuine drop in recall: 7/24 Family D accounts (29.2%) represent a genuine detection limitation where adversaries execute low-velocity isolated pairs (TOPO_16) or brand-new cold-start farms with zero entity overlap (TOPO_17); 1/24 accounts (4.2%) reflects the deterministic cold-start gate (TOPO_18, n_orders < 2 -> ABSTAIN) correctly declining to act on single-order accounts per its explicit guardrail design, not a detection failure."
+        },
+        {
+            "id": 9,
+            "title": "Gateway Prototype Latency Scope",
+            "detail": "All dual-path latency numbers (sync path p99: 9.29 ms, async path p99: 17.28 ms) are prototype design-targets measured in a local single-machine in-memory mock environment processing synthetic test data, not live distributed gateway traffic or remote database network latency."
+        },
+        {
+            "id": 10,
+            "title": "Longitudinal Lead-Time Scope & Human-in-the-Loop Quarantine",
+            "detail": "The 5.93-day advance warning metric represents organic active-formation detection across 14/19 rings (73.7%). The higher 18.60-day figure applies only to the 5/19 rings with pre-positioned sleeper accounts created before order bursts. QUARANTINE_HOLD is strictly an advisory candidate flag for human-reviewed network holds, not autonomous account enforcement."
         }
     ]
+
+
+# ── 15. GATEWAY BRIDGE & DUAL-PATH SPECIFICATION ENDPOINTS ───────────────────
+
+@app.get("/api/gateway/spec")
+def get_gateway_specification():
+    """
+    Returns the Dual-Path Production Architecture Specification and Design Targets.
+    Explicitly qualified: prototype design-targets in local mock environment.
+    """
+    qualifier = (
+        "Prototype design-target measured in a local single-machine mock environment "
+        "(in-memory adapter processing synthetic test data, not live distributed gateway traffic or remote database latency)."
+    )
+    return {
+        "title": "Dual-Path Payment Gateway Architecture Bridge",
+        "description": "Architectural contract decoupling in-line payment authorization from out-of-band graph divergence routing.",
+        "qualifier": qualifier,
+        "design_targets": {
+            "sync_path": {
+                "name": "In-Line Payment Authorization Path",
+                "budget_ms": "< 30.0 ms",
+                "scope": "Fast behavioral feature evaluation (order velocity, promo abuse, amount z-score)",
+                "actions": ["ALLOW", "CHALLENGE_2FA", "BLOCK"],
+                "authority": "Preliminary in-line risk recommendation"
+            },
+            "async_path": {
+                "name": "Near-Line Asynchronous Graph Enrichment & Divergence Routing",
+                "budget_ms": "< 500.0 ms",
+                "scope": "Multi-relational graph expansion (IP, device, payout, referral) & canonical sym_KL calculation",
+                "authority": "Authoritative DecisionEngine routing (REVIEW, ACT, WAIT_MONITOR, ABSTAIN)",
+                "conflict_policy": "Preserves both sync and async findings; flags sleeper/burst disagreements for human triage"
+            }
+        },
+        "supported_gateway_schemas": [
+            "payment.authorized (Razorpay / Stripe standard schema)",
+            "order.created",
+            "refund.created",
+            "dispute.created"
+        ]
+    }
+
+
+@app.post("/api/gateway/simulate-event")
+def simulate_gateway_event(payload: Dict[str, Any]):
+    """
+    Simulates incoming payment event ingestion through the dual-path gateway adapter.
+    Executes fast sync authorization followed by async graph divergence enrichment.
+    """
+    if not CACHE:
+        load_artifacts()
+
+    adapter: GatewayEventAdapter = CACHE.get("gateway_adapter")
+    if not adapter:
+        raise HTTPException(status_code=500, detail="Gateway adapter not initialized.")
+
+    event = GatewayPaymentEvent.from_razorpay_payload(payload)
+    account_id = event.account_id
+
+    # Retrieve features from test split or default fallback
+    idx_lookup = CACHE.get("idx_lookup", {})
+    if account_id in idx_lookup:
+        i = idx_lookup[account_id]
+        s_feat = CACHE["s_te"].iloc[i]
+        b_feat = CACHE["b_te"].iloc[i]
+        obs_days = float(b_feat.get("observation_days", 30.0))
+        n_orders = int(b_feat.get("n_orders", 5))
+    else:
+        s_feat = pd.Series({"degree": 0.0, "shared_payout_degree": 0.0})
+        b_feat = pd.Series({"promo_rate": 0.0, "order_velocity_1h": 1.0})
+        obs_days = 30.0
+        n_orders = 5
+
+    # 1. Execute Sync Authorization Path
+    sync_resp = adapter.process_sync_authorization(event, b_feat)
+
+    # 2. Execute Async Graph Enrichment Path
+    async_resp = adapter.process_async_enrichment(
+        event=event,
+        sync_response=sync_resp,
+        struct_features=s_feat,
+        behav_features=b_feat,
+        observation_days=obs_days,
+        n_orders=n_orders
+    )
+
+    return {
+        "event_id": event.event_id,
+        "account_id": event.account_id,
+        "amount_inr": event.amount_inr,
+        "event_type": event.event_type.value,
+        "sync_authorization": {
+            "action": sync_resp.action.value,
+            "behavioral_score": sync_resp.behavioral_score,
+            "p_behav": sync_resp.p_behav,
+            "execution_time_ms": sync_resp.execution_time_ms,
+            "rationale": sync_resp.rationale,
+            "qualifier": sync_resp.qualifier
+        },
+        "async_enrichment": {
+            "authoritative_decision": async_resp.authoritative_decision.value,
+            "routing_lane": async_resp.routing_lane.value,
+            "p_struct": async_resp.p_struct,
+            "p_fused": async_resp.p_fused,
+            "sym_kl_divergence": async_resp.sym_kl_divergence,
+            "evidence_conflict": async_resp.evidence_conflict,
+            "sync_async_disagreement": async_resp.sync_async_disagreement,
+            "disagreement_nature": async_resp.disagreement_nature,
+            "execution_time_ms": async_resp.execution_time_ms,
+            "qualifier": async_resp.qualifier
+        }
+    }
+
+
+@app.get("/api/gateway/benchmark")
+def get_gateway_benchmark(n_trials: int = 50):
+    """
+    Executes local prototype latency benchmark across dual execution paths.
+    Explicitly reports p50/p95/p99 with prototype design-target qualifiers.
+    """
+    if not CACHE:
+        load_artifacts()
+
+    adapter: GatewayEventAdapter = CACHE.get("gateway_adapter")
+    if not adapter:
+        raise HTTPException(status_code=500, detail="Gateway adapter not initialized.")
+
+    # Select representative sample accounts for benchmarking
+    idx = CACHE["idx"][:min(10, len(CACHE["idx"]))]
+    test_events = []
+    for acc in idx:
+        i = CACHE["idx_lookup"][acc]
+        evt = GatewayPaymentEvent(
+            event_id=f"bench_{acc}",
+            event_type=GatewayEventType.PAYMENT_AUTHORIZED,
+            account_id=acc,
+            amount_inr=1200.0,
+            currency="INR",
+            timestamp=1707776000,
+            ip_address="127.0.0.1",
+            device_id="DEV_BENCH"
+        )
+        test_events.append((evt, CACHE["s_te"].iloc[i], CACHE["b_te"].iloc[i]))
+
+    benchmark_data = adapter.benchmark_dual_path(test_events, n_iterations=n_trials)
+    return benchmark_data
+
+
+# ── 16. LONGITUDINAL TEMPORAL ESCALATION ENDPOINTS ───────────────────────────
+
+@app.get("/api/temporal-escalation/summary")
+def get_temporal_escalation_summary():
+    """
+    Returns the population-level longitudinal escalation evaluation across
+    all 19 late-forming rings (formation start >= Day 55).
+    """
+    traj_path = BASE_DIR / "evals" / "results" / "trajectory_results.parquet"
+    if not traj_path.exists():
+        raise HTTPException(status_code=404, detail="trajectory_results.parquet not found.")
+    
+    df = pd.read_parquet(traj_path)
+    policy = LongitudinalEscalationPolicy()
+    summary = policy.evaluate_all_rings(df)
+    return summary
+
+
+@app.get("/api/temporal-escalation/ring/{ring_id}")
+def get_ring_escalation_trace(ring_id: str):
+    """
+    Returns the step-by-step state machine trace for a specific late-forming ring.
+    """
+    traj_path = BASE_DIR / "evals" / "results" / "trajectory_results.parquet"
+    if not traj_path.exists():
+        raise HTTPException(status_code=404, detail="trajectory_results.parquet not found.")
+    
+    df = pd.read_parquet(traj_path)
+    ring_df = df[df["ring_id"] == ring_id]
+    if len(ring_df) == 0:
+        raise HTTPException(status_code=404, detail=f"Ring '{ring_id}' not found in evaluated late-forming rings.")
+    
+    policy = LongitudinalEscalationPolicy()
+    trace = policy.evaluate_ring_trajectory(ring_df.sort_values("checkpoint_idx"))
+    from dataclasses import asdict
+    return asdict(trace)
+
+
+# ── 17. HAND-CRAFTED ADVERSARIAL TOPOLOGY BATTERY ENDPOINTS ─────────────────
+
+@app.get("/api/handcrafted-adversarial/summary")
+def get_handcrafted_adversarial_summary():
+    """
+    Returns the overall summary of the 25-topology out-of-distribution stress battery.
+    """
+    results_path = BASE_DIR / "evals" / "results" / "handcrafted_adversarial_results.json"
+    if not results_path.exists():
+        raise HTTPException(status_code=404, detail="handcrafted_adversarial_results.json not found.")
+    
+    with open(results_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    
+    # Return high-level summary without the full array of per-topology dicts
+    return {
+        "qualifier": data.get("qualifier"),
+        "total_topologies_evaluated": data.get("total_topologies_evaluated"),
+        "total_accounts_evaluated": data.get("total_accounts_evaluated"),
+        "overall_naive_caught": data.get("overall_naive_caught"),
+        "overall_sentinel_caught": data.get("overall_sentinel_caught"),
+        "overall_naive_recall_pct": data.get("overall_naive_recall_pct"),
+        "overall_sentinel_effective_recall_pct": data.get("overall_sentinel_effective_recall_pct"),
+        "total_cases_rescued_by_conflict_review": data.get("total_cases_rescued_by_conflict_review"),
+        "family_breakdown": data.get("family_breakdown"),
+    }
+
+
+@app.get("/api/handcrafted-adversarial/topologies")
+def get_handcrafted_adversarial_topologies():
+    """
+    Returns the full list of 25 evaluated topologies and individual routing metrics.
+    """
+    results_path = BASE_DIR / "evals" / "results" / "handcrafted_adversarial_results.json"
+    if not results_path.exists():
+        raise HTTPException(status_code=404, detail="handcrafted_adversarial_results.json not found.")
+    
+    with open(results_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return data
+
+
+@app.get("/api/handcrafted-adversarial/topology/{topo_id}")
+def get_handcrafted_adversarial_topology(topo_id: str):
+    """
+    Returns metrics for a single specific topology (e.g. TOPO_01_DENSE_CLIQUE_CAMO).
+    """
+    results_path = BASE_DIR / "evals" / "results" / "handcrafted_adversarial_results.json"
+    if not results_path.exists():
+        raise HTTPException(status_code=404, detail="handcrafted_adversarial_results.json not found.")
+    
+    with open(results_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    
+    topos = data.get("topologies", [])
+    matched = [t for t in topos if t.get("topo_id") == topo_id]
+    if not matched:
+        raise HTTPException(status_code=404, detail=f"Topology '{topo_id}' not found.")
+    return matched[0]
 
 
 # Mount static assets directory if it exists

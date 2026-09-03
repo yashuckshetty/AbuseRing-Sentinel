@@ -1,0 +1,207 @@
+{
+  "scenario": "Scenario B: Subscription Platform Trial Abuse & Corporate Multi-Seat Billing",
+  "description": "Generalization stress test of already-trained models and decision engine without retraining.",
+  "n_accounts": 1800,
+  "n_ac": 270,
+  "n_bc": 450,
+  "n_bi": 1080,
+  "standalone_models": {
+    "structural_lgbm": {
+      "name": "structural_lgbm (Rung 4)",
+      "precision_ac": 0.375,
+      "recall_ac": 1.0,
+      "f1_ac": 0.5455,
+      "macro_auc": 0.6466,
+      "brier_ac": 0.25,
+      "precision_bc": 0.0,
+      "recall_bc": 0.0,
+      "precision_bi": 1.0,
+      "recall_bi": 0.9991
+    },
+    "behavioral_lgbm": {
+      "name": "behavioral_lgbm (Rung 3)",
+      "precision_ac": 0.0,
+      "recall_ac": 0.0,
+      "f1_ac": 0.0,
+      "macro_auc": 0.6793,
+      "brier_ac": 0.15,
+      "precision_bc": 0.3474,
+      "recall_bc": 0.1644,
+      "precision_bi": 0.6402,
+      "recall_bi": 0.9407
+    },
+    "fused_calibrated": {
+      "name": "fused_calibrated (Rung 5)",
+      "precision_ac": 0.2715,
+      "recall_ac": 0.6185,
+      "f1_ac": 0.3774,
+      "macro_auc": 0.861,
+      "brier_ac": 0.1798,
+      "precision_bc": 0.0189,
+      "recall_bc": 0.0044,
+      "precision_bi": 1.0,
+      "recall_bi": 0.9991
+    }
+  },
+  "decision_engine_routing": {
+    "counts": {
+      "ACT": 0,
+      "REVIEW": 924,
+      "WAIT_MONITOR": 320,
+      "ABSTAIN": 556
+    },
+    "routing_lanes": {
+      "fused_auto": 320,
+      "conflict_review": 924,
+      "abstain": 556
+    },
+    "auto_act_lane_activated": false,
+    "direct_auto_act_precision": null,
+    "direct_auto_act_recall": 0.0,
+    "auto_act_false_positives": 0,
+    "auto_act_false_positive_rate": null,
+    "captured_in_review": 0,
+    "effective_recall": 0.0,
+    "evidence_conflicts_detected": 1199,
+    "mean_sym_kl": 5.1698,
+    "median_sym_kl": 1.4524,
+    "safety_note": "Auto-ACT lane never activated (0/1800 accounts). System safely deferred 100% to REVIEW (924) or ABSTAIN (556) under unfamiliar evidence."
+  },
+  "feature_transfer_stats": {
+    "degree": {
+      "mean_ac": 19.6074,
+      "mean_bc": 23.0444,
+      "mean_bi": 6.7667
+    },
+    "shared_device_degree": {
+      "mean_ac": 6.4444,
+      "mean_bc": 1.5778,
+      "mean_bi": 1.2278
+    },
+    "shared_ip_degree": {
+      "mean_ac": 7.2741,
+      "mean_bc": 21.5111,
+      "mean_bi": 1.7889
+    },
+    "shared_payout_degree": {
+      "mean_ac": 17.0,
+      "mean_bc": 21.5111,
+      "mean_bi": 2.3241
+    },
+    "shared_instrument_degree": {
+      "mean_ac": 17.0,
+      "mean_bc": 21.5111,
+      "mean_bi": 1.4389
+    },
+    "referral_degree": {
+      "mean_ac": 0.0,
+      "mean_bc": 0.0,
+      "mean_bi": 0.0
+    },
+    "clustering_coeff": {
+      "mean_ac": 0.8912,
+      "mean_bc": 0.8826,
+      "mean_bi": 0.2627
+    },
+    "connected_component_size": {
+      "mean_ac": 128.4,
+      "mean_bc": 450.0,
+      "mean_bi": 1080.0
+    },
+    "max_edge_weight": {
+      "mean_ac": 3.8741,
+      "mean_bc": 3.0444,
+      "mean_bi": 1.013
+    },
+    "mean_edge_weight": {
+      "mean_ac": 2.4738,
+      "mean_bc": 2.8752,
+      "mean_bi": 1.0018
+    },
+    "multi_signal_edges": {
+      "mean_ac": 17.0,
+      "mean_bc": 21.5111,
+      "mean_bi": 0.013
+    },
+    "n_orders": {
+      "mean_ac": 1.0,
+      "mean_bc": 2.3911,
+      "mean_bi": 2.0917
+    },
+    "n_sessions": {
+      "mean_ac": 1.0,
+      "mean_bc": 2.3911,
+      "mean_bi": 2.0917
+    },
+    "n_returns": {
+      "mean_ac": 0.0,
+      "mean_bc": 0.0,
+      "mean_bi": 0.0
+    },
+    "return_rate": {
+      "mean_ac": 0.0,
+      "mean_bc": 0.0,
+      "mean_bi": 0.0
+    },
+    "promo_rate": {
+      "mean_ac": 0.0,
+      "mean_bc": 0.0,
+      "mean_bi": 0.0
+    },
+    "has_promo": {
+      "mean_ac": 0.0,
+      "mean_bc": 0.0,
+      "mean_bi": 0.0
+    },
+    "mean_order_amount": {
+      "mean_ac": 0.0,
+      "mean_bc": 29.99,
+      "mean_bi": 13.542
+    },
+    "std_order_amount": {
+      "mean_ac": 0.0,
+      "mean_bc": 0.0,
+      "mean_bi": 15.8929
+    },
+    "max_order_amount": {
+      "mean_ac": 0.0,
+      "mean_bc": 29.99,
+      "mean_bi": 26.0019
+    },
+    "order_days_active": {
+      "mean_ac": 1.0,
+      "mean_bc": 2.3911,
+      "mean_bi": 2.0917
+    },
+    "mean_daily_orders": {
+      "mean_ac": 1.0,
+      "mean_bc": 1.0,
+      "mean_bi": 1.0
+    },
+    "account_age_days": {
+      "mean_ac": 40.543,
+      "mean_bc": 58.4384,
+      "mean_bi": 49.9607
+    },
+    "first_order_age_days": {
+      "mean_ac": 0.0037,
+      "mean_bc": 1.5865,
+      "mean_bi": 1.0791
+    },
+    "burst_score": {
+      "mean_ac": 1.0,
+      "mean_bc": 1.0,
+      "mean_bi": 1.0
+    },
+    "n_referrals_sent": {
+      "mean_ac": 0.0,
+      "mean_bc": 0.0,
+      "mean_bi": 0.0
+    },
+    "n_referrals_received": {
+      "mean_ac": 0.0,
+      "mean_bc": 0.0,
+      "mean_bi": 0.0
+    }
+  }
+}

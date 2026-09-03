@@ -1,0 +1,83 @@
+{
+  "account_id": "ACC_00505",
+  "category": "Benign Independent",
+  "decision": "WAIT_MONITOR",
+  "routing_lane": "fused_auto",
+  "sym_kl_divergence": 0.2834,
+  "evidence_conflict": false,
+  "probabilities": {
+    "p_abusive_structural": 0.0,
+    "p_abusive_behavioral": 0.0001,
+    "p_abusive_fused": 0.0,
+    "p_benign_coord_fused": 0.0003,
+    "p_benign_indep_fused": 0.9997
+  },
+  "input_payload": {
+    "account_id": "ACC_00505",
+    "structural_sub_score": 0.0,
+    "behavioral_sub_score": 0.0001,
+    "p_abusive": 0.0,
+    "p_benign_coord": 0.0003,
+    "p_benign_indep": 0.9997,
+    "sym_kl_divergence": 0.2834,
+    "evidence_conflict": false,
+    "conflict_reason": "Structural=0.000 vs Behavioral=0.000 (sym_KL=0.283)",
+    "n_orders": 6,
+    "n_returns": 0,
+    "return_rate": 0.0,
+    "promo_rate": 0.0,
+    "has_promo": 0,
+    "n_referrals_received": 0,
+    "n_referrals_sent": 0,
+    "burst_score": 2,
+    "account_age_days": 88.6,
+    "observation_window_days": 88.6,
+    "shared_payout_degree": 0,
+    "shared_device_degree": 0,
+    "shared_ip_degree": 3,
+    "referral_degree": 0,
+    "multi_signal_edges": 0,
+    "connected_component_size": 4987,
+    "known_ring_ids": [],
+    "known_shared_entity_ids": [],
+    "as_of_ts": 1707776000
+  },
+  "real_llm_response": {
+    "conflict_explanation": "Structural and behavioral sub-scores are both minimal (0.0 and 0.0001 respectively), indicating strong alignment between structural and behavioral indicators with no evidence conflict.",
+    "key_signals": [
+      "ACC_00505 shows standard activity with 6 total orders, 0 returns, and 0 promo usages over an 88.6-day observation window.",
+      "The account shares an IP address with 3 entities, but has 0 shared payout, shared device, or referral links.",
+      "ACC_00505 is part of a connected component of size 4987, though it exhibits 0 multi-signal edges and no known ring associations."
+    ],
+    "analyst_suggestions": [
+      "Human reviewer should inspect the nature of the 3 shared IP connections to determine whether the shared IP stems from a benign public or corporate network.",
+      "Human reviewer should evaluate the overall connected component graph structure to verify if the connection to 4987 nodes is solely driven by weak IP co-location."
+    ],
+    "qualitative_assessment": "Evidence suggests predominantly benign independent behavior, with account activity showing low risk indicators despite broad cluster membership via shared IP address."
+  },
+  "mock_response": {
+    "conflict_explanation": "Account ACC_00505 shares infrastructure (shared_payout_degree=0, shared_device_degree=0, shared_ip_degree=3) but displays standard non-abusive purchasing patterns (behavioral_sub_score=0.000, burst_score=2, promo_rate=0.000). Evidence is consistent with benign family/household coordination rather than systematic exploitation.",
+    "key_signals": [
+      "shared_payout_degree=0",
+      "behavioral_sub_score=0.0001",
+      "structural_sub_score=0.0000",
+      "burst_score=2",
+      "sym_kl=0.2834",
+      "n_orders=6"
+    ],
+    "analyst_suggestions": [
+      "Confirm whether linked accounts share a common delivery address or household profile",
+      "Check if payment methods represent joint family accounts or standard shared instruments"
+    ],
+    "qualitative_assessment": "Consistent with legitimate family/household coordination; low probability of malicious intent.",
+    "_is_mock": true
+  },
+  "validation": {
+    "boundary_passed": true,
+    "violations": []
+  },
+  "latency": {
+    "real_llm_seconds": 27.8476,
+    "mock_seconds": 0.0014
+  }
+}

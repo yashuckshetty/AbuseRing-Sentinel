@@ -1,0 +1,85 @@
+{
+  "account_id": "ACC_04430",
+  "category": "Sleeper Account",
+  "decision": "REVIEW",
+  "routing_lane": "conflict_review",
+  "sym_kl_divergence": 1.5535,
+  "evidence_conflict": true,
+  "probabilities": {
+    "p_abusive_structural": 0.9998,
+    "p_abusive_behavioral": 0.6299,
+    "p_abusive_fused": 0.9908,
+    "p_benign_coord_fused": 0.0087,
+    "p_benign_indep_fused": 0.0004
+  },
+  "input_payload": {
+    "account_id": "ACC_04430",
+    "structural_sub_score": 0.9998,
+    "behavioral_sub_score": 0.6299,
+    "p_abusive": 0.9908,
+    "p_benign_coord": 0.0087,
+    "p_benign_indep": 0.0004,
+    "sym_kl_divergence": 1.5535,
+    "evidence_conflict": true,
+    "conflict_reason": "Structural=1.000 vs Behavioral=0.630 (sym_KL=1.554)",
+    "n_orders": 9,
+    "n_returns": 0,
+    "return_rate": 0.0,
+    "promo_rate": 0.444,
+    "has_promo": 1,
+    "n_referrals_received": 1,
+    "n_referrals_sent": 0,
+    "burst_score": 2,
+    "account_age_days": 87.2,
+    "observation_window_days": 87.2,
+    "shared_payout_degree": 0,
+    "shared_device_degree": 31,
+    "shared_ip_degree": 54,
+    "referral_degree": 1,
+    "multi_signal_edges": 16,
+    "connected_component_size": 4987,
+    "known_ring_ids": [],
+    "known_shared_entity_ids": [],
+    "as_of_ts": 1707776000
+  },
+  "real_llm_response": {
+    "conflict_explanation": "A divergence is observed between the near-maximum structural signal (0.9998) and the moderate behavioral signal (0.6299), highlighted by a symmetric KL divergence of 1.5535. This reflects strong graph-based network overlaps alongside relatively moderate transaction-level anomalies.",
+    "key_signals": [
+      "High structural connectivity with shared_device_degree of 31 and shared_ip_degree of 54 for account ACC_04430.",
+      "Membership in a large connected network component of size 4,987 with 16 multi-signal edges.",
+      "Moderate promotional usage (promo_rate of 0.444) across 9 orders within an account age of 87.2 days.",
+      "Zero returns recorded across all 9 completed orders."
+    ],
+    "analyst_suggestions": [
+      "Human reviewer should inspect the 31 shared devices and 54 shared IPs connected to ACC_04430 for indicators of device emulation or shared network environments.",
+      "Human reviewer should evaluate the 16 multi-signal graph edges to identify overlapping accounts within the 4,987-node connected component.",
+      "Human reviewer should verify order details and referral source for ACC_04430 to confirm legitimate individual user activity versus automated promo redemption."
+    ],
+    "qualitative_assessment": "Evidence suggests potential coordinated network behavior due to extensive device and IP sharing within a very large connected component, while the standalone order behavior of ACC_04430 remains ambiguous."
+  },
+  "mock_response": {
+    "conflict_explanation": "Account ACC_04430 exhibits strong structural graph links (structural_sub_score=1.000, shared_payout_degree=0, shared_device_degree=31) while maintaining low individual behavioral velocity (behavioral_sub_score=0.630, burst_score=2). This pattern is consistent with sleeper accounts or dormant ring nodes pre-positioned for coordinated activity.",
+    "key_signals": [
+      "shared_payout_degree=0",
+      "behavioral_sub_score=0.6299",
+      "structural_sub_score=0.9998",
+      "burst_score=2",
+      "sym_kl=1.5535",
+      "n_orders=9"
+    ],
+    "analyst_suggestions": [
+      "Review other accounts linked to shared payout destinations with ACC_04430",
+      "Audit historical device and IP associations for known high-risk cluster membership"
+    ],
+    "qualitative_assessment": "Strong graph connectivity paired with low transaction velocity; warrants human review for shared cashout risk.",
+    "_is_mock": true
+  },
+  "validation": {
+    "boundary_passed": true,
+    "violations": []
+  },
+  "latency": {
+    "real_llm_seconds": 13.3436,
+    "mock_seconds": 0.0008
+  }
+}
