@@ -1,0 +1,22 @@
+{
+  "qualifier": "Prototype design-target measured in a local single-machine mock environment (in-memory adapter processing synthetic test data, not live distributed gateway traffic or remote database latency). Values are machine-dependent.",
+  "n_iterations": 100,
+  "sync_path": {
+    "design_budget_ms": 30.0,
+    "design_target_ms": "< 30.0 ms",
+    "p50_ms": 2.602,
+    "p95_ms": 3.141,
+    "p99_ms": 3.557,
+    "mean_ms": 2.581,
+    "meets_design_target": true
+  },
+  "async_path": {
+    "design_budget_ms": 500.0,
+    "design_target_ms": "< 500.0 ms",
+    "p50_ms": 8.824,
+    "p95_ms": 10.519,
+    "p99_ms": 10.781,
+    "mean_ms": 8.757,
+    "meets_design_target": true
+  }
+}

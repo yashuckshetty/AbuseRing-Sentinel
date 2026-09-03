@@ -92,7 +92,7 @@ Open **`http://localhost:8000`** in your browser.
 
 ### Option 2: One-Command Local Script (Linux / macOS / Windows)
 
-Run environment dependency verification, execute the full 117-test pytest suite, and launch the server automatically:
+Run environment dependency verification, execute the full 118-test pytest suite, and launch the server automatically:
 
 ```bash
 # On Linux / macOS:
@@ -114,7 +114,7 @@ source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 # 2. Install dependencies
 pip install -r requirements.txt
 
-# 3. Run full regression test suite (117 tests)
+# 3. Run full regression test suite (118 tests)
 python -m pytest tests/ -v
 
 # 4. Start the interactive dashboard and API
@@ -214,6 +214,8 @@ To demonstrate how AbuseRing Sentinel integrates into real payment processing en
 |---|:---:|:---:|:---:|:---:|
 | **Synchronous In-Line Path** | $<30.0\text{ ms}$ | **$3.01\text{ ms}$** | **$3.57\text{ ms}$** | **$9.29\text{ ms}$** |
 | **Asynchronous Near-Line Path** | $<500.0\text{ ms}$ | **$10.31\text{ ms}$** | **$11.78\text{ ms}$** | **$17.28\text{ ms}$** |
+
+*Raw benchmark results generated via `evals/gateway_latency_eval.py` and saved to [`evals/results/gateway_latency_results.json`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/evals/results/gateway_latency_results.json). Tabulated p50/p95/p99 values are measured from a local benchmark run and are machine-dependent.*
 
 ---
 
@@ -449,7 +451,7 @@ Strict boundary contracts enforced and validated on all outputs:
 
 ## Test suite
 
-117 automated tests across 14 test modules (100% pass rate). All stage integration tests load real v2.0 parquet
+118 automated tests across 14 test modules (100% pass rate). All stage integration tests load real v2.0 parquet
 output -- no mocked fixtures for data-level assertions.
 
 | Module | Tests | Scope & Invariants Verified |
@@ -467,11 +469,11 @@ output -- no mocked fixtures for data-level assertions.
 | [`test_gateway_adapter.py`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/tests/test_gateway_adapter.py) | 7 | Gateway bridge: sync vs async dual-path execution, HMAC verification, divergence routing |
 | [`test_temporal_escalation.py`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/tests/test_temporal_escalation.py) | 4 | Lifecycle state machine: state transitions, 19 late-forming ring lead time decomposition |
 | [`test_handcrafted_adversarial.py`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/tests/test_handcrafted_adversarial.py) | 5 | 25 out-of-distribution deterministic topologies: 85.2% recall vs 54.3% naive fusion |
-| [`test_api.py`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/tests/test_api.py) | 27 | FastAPI endpoint contracts: model ladder, decisions, gateway, temporal, handcrafted battery |
+| [`test_api.py`](file:///c:/Users/yashu/Downloads/AbuseRing%20Sentinel/tests/test_api.py) | 28 | FastAPI endpoint contracts: model ladder, decisions, gateway, temporal, handcrafted battery |
 
 ```bash
 python -m pytest tests/ -v
-# Expected: 117 passed (100%)
+# Expected: 118 passed (100%)
 ```
 
 ---

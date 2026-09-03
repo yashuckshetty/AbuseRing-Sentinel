@@ -18,7 +18,7 @@ def test_health_endpoint():
     data = response.json()
     assert data["status"] == "healthy"
     assert data["artifacts_loaded"] is True
-    assert data["files_checked"] == 16
+    assert data["files_checked"] == 17
     assert len(data["missing_files"]) == 0
 
 
@@ -354,3 +354,22 @@ def test_handcrafted_adversarial_topology_endpoint():
     data = res.json()
     assert data["topo_id"] == "TOPO_01_DENSE_CLIQUE_CAMO"
     assert "decision_breakdown" in data
+
+
+def test_gateway_latency_results_artifact():
+    """Verifies gateway_latency_results.json artifact exists, parses, and contains required fields."""
+    artifact_path = BASE_DIR / "evals" / "results" / "gateway_latency_results.json"
+    assert artifact_path.exists(), "gateway_latency_results.json must exist"
+    with open(artifact_path, "r") as f:
+        data = json.load(f)
+    assert "qualifier" in data
+    assert "Prototype design-target measured in a local single-machine mock environment" in data["qualifier"]
+    assert "sync_path" in data
+    assert "async_path" in data
+    for path_key in ["sync_path", "async_path"]:
+        assert "p50_ms" in data[path_key]
+        assert "p95_ms" in data[path_key]
+        assert "p99_ms" in data[path_key]
+        assert data[path_key]["p50_ms"] >= 0.0
+        assert data[path_key]["p95_ms"] >= 0.0
+        assert data[path_key]["p99_ms"] >= 0.0

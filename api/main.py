@@ -205,6 +205,7 @@ def get_health():
         "evals/results/capacity_constrained_results.json",
         "evals/results/ai_security_results.json",
         "evals/results/handcrafted_adversarial_results.json",
+        "evals/results/gateway_latency_results.json",
     ]
     missing = [f for f in required_files if not (BASE_DIR / f).exists()]
     
