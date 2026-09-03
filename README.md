@@ -70,7 +70,6 @@ AbuseRing Sentinel/
 |   +-- handcrafted_adversarial.py# 25-topology independent stress battery
 |   +-- metrics.json              # Stored evaluation results per model per split
 +-- demo.py                       # Deterministic 5-act offline narrative walkthrough
-+-- DEMO.md                       # 5-minute video presentation guide + click-path
 +-- tests/                        # 119 tests across 15 test modules (100% pass)
 +-- conftest.py
 ```
