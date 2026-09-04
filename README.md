@@ -69,8 +69,8 @@ AbuseRing Sentinel/
 +-- evals/
 |   +-- handcrafted_adversarial.py# 25-topology independent stress battery
 |   +-- metrics.json              # Stored evaluation results per model per split
-+-- demo.py                       # Deterministic 5-act offline narrative walkthrough
-+-- tests/                        # 119 tests across 15 test modules (100% pass)
++-- demo.py                       # Deterministic 5-act offline walkthrough; self-verifies headline vs artifact
++-- tests/                        # 120 tests across 15 test modules (100% pass)
 +-- conftest.py
 ```
 
@@ -96,7 +96,7 @@ Open **`http://localhost:8000`** in your browser.
 
 ### Option 2: One-Command Local Script (Linux / macOS / Windows)
 
-Run environment dependency verification, execute the full 119-test pytest suite, and launch the server automatically:
+Run environment dependency verification, execute the full 120-test pytest suite, and launch the server automatically:
 
 ```bash
 # On Linux / macOS:
@@ -118,7 +118,7 @@ source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 # 2. Install dependencies
 pip install -r requirements.txt
 
-# 3. Run full regression test suite (119 tests)
+# 3. Run full regression test suite (120 tests)
 python -m pytest tests/ -v
 
 # 4. Start the interactive dashboard and API
@@ -455,7 +455,7 @@ Strict boundary contracts enforced and validated on all outputs:
 
 ## Test suite
 
-119 automated tests across 15 test modules (100% pass rate). All stage integration tests load real v2.0 parquet
+120 automated tests across 15 test modules (100% pass rate). All stage integration tests load real v2.0 parquet
 output -- no mocked fixtures for data-level assertions.
 
 | Module | Tests | Scope & Invariants Verified |
@@ -473,12 +473,12 @@ output -- no mocked fixtures for data-level assertions.
 | [`test_gateway_adapter.py`](tests/test_gateway_adapter.py) | 7 | Gateway bridge: sync vs async dual-path execution, HMAC verification, divergence routing |
 | [`test_temporal_escalation.py`](tests/test_temporal_escalation.py) | 4 | Lifecycle state machine: state transitions, 19 late-forming ring lead time decomposition |
 | [`test_handcrafted_adversarial.py`](tests/test_handcrafted_adversarial.py) | 5 | 25 out-of-distribution deterministic topologies: 85.2% recall vs 54.3% naive fusion |
-| [`test_demo.py`](tests/test_demo.py) | 1 | Demo narrative verification: 5-act offline execution, all 6 curated decisions asserted |
+| [`test_demo.py`](tests/test_demo.py) | 2 | Demo narrative verification: 5-act offline execution, all 6 curated decisions asserted, live full-test-split lane recompute asserted equal to the committed `adversarial_results.json` baseline |
 | [`test_api.py`](tests/test_api.py) | 28 | FastAPI endpoint contracts: model ladder, decisions, gateway, temporal, handcrafted battery |
 
 ```bash
 python -m pytest tests/ -v
-# Expected: 119 passed (100%)
+# Expected: 120 passed (100%)
 ```
 
 ---
