@@ -11,6 +11,8 @@ No network calls, no LLM invocations, no retraining, no data modifications.
 
 from __future__ import annotations
 
+import contextlib
+import io
 import json
 import os
 import sys
@@ -53,7 +55,8 @@ def main():
     labels = pd.read_parquet(data_dir / "labels.parquet")
     split_info = json.load(open(data_dir / "split_info.json"))
 
-    splits = build_temporal_splits(events, accounts, labels, split_info)
+    with contextlib.redirect_stdout(io.StringIO()):
+        splits = build_temporal_splits(events, accounts, labels, split_info)
     test_sp = splits["test"]
     idx = list(test_sp["labels"].index)
     idx_lookup = {acc: i for i, acc in enumerate(idx)}
@@ -309,17 +312,19 @@ def main():
         print(f"Ring ID: {r_trace.ring_id} | Type: {r_trace.ring_type} | Formation: Day {r_trace.formation_start_day} to Day {r_trace.formation_complete_day}")
         print(f"Escalation Lead Time vs Ring Completion: {r_trace.escalation_lead_time_vs_complete_days} days in advance")
         print()
-        print(f"{'Checkpoint':15s} {'Day':5s} {'Risk State':22s} {'Ring Breakdown':25s} {'Mean sym_KL':12s}")
+        print(f"{'Checkpoint':15s} {'Day':8s} {'Risk State':24s} {'Ring Breakdown':32s} {'Mean sym_KL':12s}")
         print("-" * 80)
         for h in r_trace.checkpoint_history:
             bd = h["breakdown"]
-            bd_str = f"ACT:{bd['ACT']} REV:{bd['REVIEW']} WAIT:{bd['WAIT']}"
-            print(f"{h['checkpoint_label']:15s} Day {h['checkpoint_day']:<3d} {h['state']:22s} {bd_str:25s} {h['sym_kl_mean']:<12.3f}")
+            bd_str = f"ACT:{bd.get('ACT', 0)} REV:{bd.get('REVIEW', 0)} WAIT:{bd.get('WAIT', 0)} ABS:{bd.get('ABSTAIN', 0)}"
+            print(f"{h['checkpoint_label']:15s} Day {h['checkpoint_day']:<4d} {h['state']:24s} {bd_str:32s} {h['sym_kl_mean']:<12.3f}")
         print("-" * 80)
         print("Real state transitions produced by policy/temporal_escalation.py:")
         for tr in r_trace.transitions:
             print(f"  * Day {tr.checkpoint_day:2d} ({tr.checkpoint_label}): {tr.from_state.value} -> {tr.to_state.value}")
             print(f"    Reason: {tr.trigger_reason}")
+        print()
+        print(f"Mandatory Qualifier:\n  \"{r_trace.qualifier}\"")
     print()
 
     # =========================================================================
